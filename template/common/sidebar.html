@@ -1,0 +1,101 @@
+
+{% load static %}
+
+    <div class="topnav">
+        <div class="container-fluid">
+            <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
+                <div class="collapse navbar-collapse" id="topnav-menu-content">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a href="/dashboard/dashboard/" class="waves-effect nav-link">
+                                <i class="bx bx-home-circle"></i>
+                                <span key="t-dashboards">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/clientmgmt/client_view/" class="waves-effect nav-link">
+                                <i class="bx bx-user"></i>
+                                <span key="t-clientmgmt">Client</span>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-pages" role="button"
+                            >
+                                <i class="bx bx-customize me-2"></i><span key="t-apps">Masters</span> <div class="arrow-down"></div>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="topnav-pages">
+                                <div class="dropdown">
+                                    <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-jyotishi"
+                                        role="button">
+                                        <span key="t-jyotishi">Jyotishi</span> <div class="arrow-down"></div>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="topnav-jyotishi">
+                                        <a href="/jyotishimgmt/jyotishi_que/" class="dropdown-item" key="t-jyotishi_questions">Jyotishi Questions</a>
+                                    <a href="/jyotishimgmt/jyotishi_upay/" class="dropdown-item" key="t-jyotishi_upay">Jyotishi Upay</a>
+                                    <a href="/jyotishimgmt/jyotishi_salla/" class="dropdown-item" key="t-jyotishi_salla">Jyotishi Salla</a>
+                                    <a href="/jyotishimgmt/vishes_salla/" class="dropdown-item" key="t-vishes_salla">Vishes Salla</a>
+                                    <a href="/jyotishimgmt/karmic_upay/" class="dropdown-item" key="t-karmic_upay">Karmic Upay</a>
+                                    </div>
+                                </div>
+
+                                <div class="dropdown">
+                                    <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-vastu"
+                                        role="button">
+                                        <span key="t-vastu">Vastu</span> <div class="arrow-down"></div>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="topnav-vastu">
+                                        <a href="/vastumgmt/vastu_view/" class="dropdown-item" key="t-vastu">Vastu</a>
+                                        <a href="/vastumgmt/disha_view/" class="dropdown-item" key="t-disha">Disha</a>
+                                        <a href="/vastumgmt/parinam_view/" class="dropdown-item" key="t-parinam">Parinam</a>
+                                        <a href="/vastumgmt/badaldisha_view/" class="dropdown-item" key="t-badal_disha">Badal Disha</a>
+                                        <a href="/vastumgmt/bsn_upay/" class="dropdown-item" key="t-badal_shakya">Badal Shakya Naslyas Upay</a>
+                                        <a href="/vastumgmt/etar_upay/" class="dropdown-item" key="t-etar_upay">Etar Upay</a>
+                                        <a href="/vastumgmt/vishes_upay/" class="dropdown-item" key="t-vishes_upay">Vishes Upay</a>
+                                        <a href="/vastumgmt/twod_threed_upay/" class="dropdown-item" key="t-2d-3d_upay">2D 3D Upay</a>
+                                        <a href="/vastumgmt/extra_upay/" class="dropdown-item" key="t-2d-3d_upay">Extra Upay</a>
+                                        <a href="/vastumgmt/vishes_salla/" class="dropdown-item" key="t-vishes_salla">Vishes Salla</a>
+                                    </div>
+                                </div>
+
+                                <div class="dropdown">
+                                    <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-stock"
+                                        role="button">
+                                        <span key="t-stock">Stock</span> <div class="arrow-down"></div>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="topnav-stock">
+                                        <a href="/stockmgmt/product_type/" class="dropdown-item" key="t-product_type">Product Type</a>
+                                        <a href="/stockmgmt/product_name/" class="dropdown-item" key="t-product_name">Product Name</a>
+                                        <a href="/stockmgmt/company_name/" class="dropdown-item" key="t-company_name">Company Name</a>
+                                    </div>
+                                </div>
+                            </div>  
+                        </li>
+                        <li class="nav-item">
+                            <a href="/jyotishimgmt/jyotishi_view/" class="waves-effect nav-link">
+                                <i class="bx bx-file"></i>
+                                <span key="t-jyotishimgmt">Jyotishi</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/vastumgmt/vastu_mgmt_view/" class="waves-effect nav-link">
+                                <i class="bx bx-file"></i>
+                                <span key="t-vastumgmt">Vastu</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/stockmgmt/stock_view/" class="waves-effect nav-link">
+                                <i class="bx bx-file"></i>
+                                <span key="t-vastumgmt">Stock</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/billmgmt/bill_view/" class="waves-effect nav-link">
+                                <i class="bx bx-file"></i>
+                                <span key="t-vastumgmt">Bill</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>

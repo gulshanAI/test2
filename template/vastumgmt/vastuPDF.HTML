@@ -1,0 +1,280 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jyotishi PDF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ... Your existing HTML code ... -->
+
+<!-- Content for printing only -->
+<div class="print-content print-only">
+    <!-- Your middle page data goes here -->
+    <section>
+        <div style='background-color:rgb(255,255,255);margin:40px 0 0;font:12px/16px Arial,sans-serif;'> <!-- Adjust margin-top as needed -->
+            <table style='width: 740px;color: rgb(51,51,51);margin: 0 auto;border-collapse: collapse;'>
+                <!-- ... Your existing table structure ... -->
+                <tbody>
+                    <tr>
+                        <td style='margin-top: 40px; padding:0 20px 20px 20px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                            <!-- ... Your existing content within this td ... -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- ... -->
+</div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        /* Style for the table with the "tb" class */
+		.tb {
+			width: 100%; /* Set the width to 50% */
+			display: inline-block; /* Display the table inline-block */
+			vertical-align: top; /* Align them at the top */
+		} 
+
+        body {
+            background-color: rgb(255, 255, 255);
+            margin: 0;
+            font: 12px/16px Arial, sans-serif;
+        }
+
+        .header, .footer {
+            visibility: hidden;
+            height: 0;
+        }
+    
+
+        .header {
+            margin-top: 80px; /* Adjust the top margin as needed */
+        }
+
+        .footer {
+            margin-top: 20px; /* Adjust the margin-top for the footer as needed */
+        }
+    
+    
+
+        .print-content {
+            width: 740px;
+            color: rgb(51, 51, 51);
+            margin: auto 0;
+            border-collapse: collapse;
+        }
+
+        /* Styles for screen display */
+        @media screen {
+            .header, .footer {
+                display: block; /* Show header and footer for screen display */
+            }
+        }
+
+        /* Styles for printing */
+        @media print {
+            .header, .footer {
+                visibility: hidden;
+                height: 0;
+                
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <!-- Your header content goes here -->
+        <p>This is your header content</p>
+    </div>
+
+    <!-- Content for printing only -->
+    <div class="print-content print-only">
+        <!-- Your middle page data goes here -->
+        <section>
+            <div style='background-color:rgb(255,255,255);margin:0;font:12px/16px Arial,sans-serif;margin-top: 80px!important'>
+                <table style='width: 740px;color: rgb(51,51,51);margin: 0 auto;border-collapse: collapse;'>
+                    <tbody>
+                        <tr>
+                            <td style='padding:0 20px 20px 20px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                <table style='width:100%;'>
+                                    <tbody>
+                                        <tr>
+                                            <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                                <table style='width:100%;border-top:solid rgb(45,55,65);border-width:thin;border-collapse:collapse;'>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style='vertical-align:top;font-size:14px;line-height:16px;font-family:Arial,sans-serif;padding:11px 18px 18px 18px;'> 
+                                                                <p style='font-size:13px;color:rgb(0,0,0);margin: 0px;'>{%for jul in heading%}
+                                                                    <strong><h3>दिनांक: {{ jul.date_field}}<br> <br>नाव : {{ jul.client_name}} , फोन : {{ jul.mobile}}</h3></strong>
+                                                                    
+                                                                    {%endfor%}</p>
+                                                                
+                                                           </td>   
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td style='font-size:14px;padding:11px 18px 18px 18px;width:50%;vertical-align:top;line-height:16px;font-family:Arial,sans-serif;text-align: left;'> 
+                                                                <p style='margin:2px 0 2px 0;font:12px/16px Arial,sans-serif;'> 
+                                                                    
+                                                                    {%for jul in heading%}
+                                                                    <strong><h3>वास्तु :  {{ jul.vastu | safe}}</h3></strong>
+                                                                   
+                                                                    {%endfor%}
+                                                    
+                                                                </p>
+                                                            </td>   
+                                                        </tr>
+
+                                                
+                                                        <tr>
+                                                            <td style='font-size:14px;padding:11px 18px 18px 18px;width:50%;vertical-align:top;line-height:16px;font-family:Arial,sans-serif;text-align: left;'> 
+                                                                <p style='margin:2px 0 2px 0;font:12px/16px Arial,sans-serif;'> 
+                                                                    
+                                                                    {%for jul in heading%}
+                                                                    <strong><h3>दिशा : </h3></strong>
+                                                                    {{ jul.disha | safe}}
+                                                                    {%endfor%}
+                                                                    
+                                                                </p>
+                                                            </td>  
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td style='font-size:14px;padding:11px 18px 18px 18px;width:50%;vertical-align:top;line-height:16px;font-family:Arial,sans-serif;text-align: left;'> 
+                                                                <p style='margin:2px 0 2px 0;font:12px/16px Arial,sans-serif;'> 
+                                                                    
+                                                                    {%for jul in heading%}
+                                                                    <strong><h3>परिणाम : </h3></strong>
+                                                                    {{ jul.parinam | safe}}
+                                                                    {%endfor%}
+                                                                    
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td style='font-size:14px;padding:11px 18px 18px 18px;width:50%;vertical-align:top;line-height:16px;font-family:Arial,sans-serif;text-align: left;'> 
+                                                                <p style='margin:2px 0 2px 0;font:12px/16px Arial,sans-serif;'> 
+                                                                    
+                                                                    {%for jul in heading%}
+                                                                    <strong><h3>बदल दिशा : </h3></strong>
+                                                                    {{ jul.badal_disha | safe}}
+                                                                    {%endfor%}
+                                                                    
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td style='font-size:14px;padding:11px 18px 18px 18px;width:50%;vertical-align:top;line-height:16px;font-family:Arial,sans-serif;text-align: left;'> 
+                                                                <p style='margin:2px 0 2px 0;font:12px/16px Arial,sans-serif;'> 
+                                                                    
+                                                                    {%for jul in heading%}
+                                                                    <strong><h3>बदल शक्य नसल्यास उपाय : </h3>
+                                                                    </strong>
+                                                                    {{ jul.bsn_upay | safe}}
+                                                                    {%endfor%}
+                                                                    
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td style='font-size:14px;padding:11px 18px 18px 18px;width:50%;vertical-align:top;line-height:16px;font-family:Arial,sans-serif;text-align: left;'> 
+                                                                <p style='margin:2px 0 2px 0;font:12px/16px Arial,sans-serif;'> 
+                                                                    
+                                                                    {%for jul in heading%}
+                                                                    <strong><h3>इतर उपाय : </h3>
+                                                                    </strong>
+                                                                    {{ jul.etar_upay | safe}}
+                                                                    {%endfor%}
+                                                                    
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td style='font-size:14px;padding:11px 18px 18px 18px;width:50%;vertical-align:top;line-height:16px;font-family:Arial,sans-serif;text-align: left;'> 
+                                                                <p style='margin:2px 0 2px 0;font:12px/16px Arial,sans-serif;'> 
+                                                                    
+                                                                    {%for jul in heading%}
+                                                                    <strong><h3>विशेष उपाय : </h3>
+                                                                    </strong>
+                                                                    {{ jul.vis_upay | safe}}
+                                                                    {%endfor%}
+                                                                    
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td style='font-size:14px;padding:11px 18px 18px 18px;width:50%;vertical-align:top;line-height:16px;font-family:Arial,sans-serif;text-align: left;'> 
+                                                                <p style='margin:2px 0 2px 0;font:12px/16px Arial,sans-serif;'> 
+                                                                    
+                                                                    {%for jul in heading%}
+                                                                    <strong><h3>२d`Ω ३d उपाय : </h3>
+                                                                    </strong>
+                                                                    {{ jul.twod_threed_upay | safe}}
+                                                                    {%endfor%}
+                                                                    
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td style='font-size:14px;padding:11px 18px 18px 18px;width:50%;vertical-align:top;line-height:16px;font-family:Arial,sans-serif;text-align: left;'> 
+                                                                <p style='margin:2px 0 2px 0;font:12px/16px Arial,sans-serif;'> 
+                                                                    
+                                                                    {%for jul in heading%}
+                                                                    <strong><h3>एक्स्ट्रा उपाय : </h3>
+                                                                    </strong>
+                                                                    {{ jul.ext_upay | safe}}
+                                                                    {%endfor%}
+                                                                    
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td style='font-size:14px;padding:11px 18px 18px 18px;width:50%;vertical-align:top;line-height:16px;font-family:Arial,sans-serif;text-align: left;'> 
+                                                                <p style='margin:2px 0 2px 0;font:12px/16px Arial,sans-serif;'> 
+                                                                    
+                                                                    {%for jul in heading%}
+                                                                    <strong><h3>विशेष सल्ला : </h3>
+                                                                    </strong>
+                                                                    {{ jul.vis_salla | safe}}
+                                                                    {%endfor%}
+                                                                    
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <!-- ... -->
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <!-- Your footer content goes here -->
+        <p>This is your footer content</p>
+    </div>
+
+    <!-- Additional styles and HTML structure as needed -->
+</body>
+</html>

@@ -1,0 +1,738 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block meta %}
+    <title>DMS - Dashboard</title>
+{% endblock meta %}
+
+{% block datatable_css %}
+    <link rel="stylesheet" href="{% static 'assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css'%}">
+{% endblock datatable_css %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/libs/select2/css/select2.min.css'%}">
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+
+
+    <style>
+        .form-floating>.form-control, .form-floating>.form-select {
+            height: calc(2.8rem + 1px) !important;
+            padding: 1rem .75rem;
+        }
+        .form-floating>.textuti {
+            height: calc(2.8rem + 30px) !important;
+        }
+        .select2
+        {
+            width: 100% !important;
+        }
+        .amsify-suggestags-list{
+        z-index: 1 !important;
+        width: 100% !important;
+        }
+        textarea,
+        .textarea {
+        min-height: inherit;
+        height: auto;
+        }
+        .form-check
+        {
+            display: inline-block;
+        }
+
+        .dtr-title{
+            font-weight: 600;
+        }
+
+        /** SPINNER CREATION **/
+
+        .loader {
+        position: relative;
+        text-align: center;
+        margin: 15px auto 35px auto;
+        z-index: 9999;
+        display: block;
+        width: 80px;
+        height: 80px;
+        border: 10px solid rgba(0, 0, 0, .3);
+        border-radius: 50%;
+        border-top-color: #000;
+        animation: spin 1s ease-in-out infinite;
+        -webkit-animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+        }
+
+        @-webkit-keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+        }
+    </style>
+{% endblock page_css %}
+
+{% block content %}
+
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item active">Stock Management</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Search File</h5>
+                        <!-- {!! Form::open(['class'=>"form-horizontal",'id'=>"inv_report_form"]) !!} -->
+                        <form method="post" action="/stockmgmt/stock_view/" id="s_stock_mgmt_form">
+                            {% csrf_token %}
+                            <div class="row">
+                                <input type="hidden" name="roles" id="roles" value="">
+                                <div class="col-md-3 col-sm-12 col-lg-3">
+                                    <div class="form-group mb-3">
+                                        <label for="s_stock_type" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Stock Type<sup class="text-danger">*</sup></label>
+                                        <select class="form-control select2" id="s_stock_type" required name="s_stock_type">
+                                            <option value="" disabled>Select Stock Type</option>
+                                            <option value="Purchase"">Purchase</option>
+                                            <option value="Return"">Return</option>
+                                        </select>
+                                        <span class="text-danger error" id="esoerror"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 col-sm-12 col-lg-3">
+                                    <div class="form-group mb-3">
+                                        <label for="s_product_type" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Product Type<sup class="text-danger"></sup></label>
+                                        <select class="form-control select2" id="s_product_type"  name="s_product_type">
+                                            <option value="" selected disabled>Select Product Type</option>
+                                        {%for ptl in pro_typ_list%}
+                                            <option value="{{ptl.id}}" data-product_type="{{ptl.product_type}}">{{ptl.product_type}}</option>
+                                        {%endfor%}
+                                        
+                                        </select>
+                                        <span class="text-danger error" id="esoerror"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Code For Product Name -->
+
+                                <div class="col-md-3 col-sm-12 col-lg-3">
+                                    <div class="form-group mb-3">
+                                        <label for="s_product_name" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Product Name<sup class="text-danger"></sup></label>
+                                        <select class="form-control select2" id="s_product_name"  name="s_product_name">
+                                            <option value="" disabled>Select Product Name</option>
+                                        </select>
+                                        <span class="text-danger error" id="esoerror"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Code For Company Name -->
+
+                                <div class="col-md-3 col-sm-12 col-lg-3">
+                                    <div class="form-group mb-3">
+                                        <label for="s_company_name" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Company Name<sup class="text-danger"></sup></label>
+                                        <select class="form-control select2" id="s_company_name"  name="s_company_name">
+                                            <option value="" disabled>Select Company Name</option>
+                                        </select>
+                                        <span class="text-danger error" id="esoerror"></span>
+                                    </div>
+                                </div>
+
+                                {% now "Y-m-d" as tdate %}  
+                                <!-- Get the current date in the format "Y-m-d" -->
+                                <div class="col-md-2 col-sm-12 col-lg-2">
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control" id="from_date" placeholder="Date" name="from_date" required max="{{ tdate }}" value="">
+                                        <label for="date">From Date<sup class="text-danger">*</sup></label>
+                                    </div>
+                                </div>
+
+                                {% now "Y-m-d" as tdate %}  
+                                <!-- Get the current date in the format "Y-m-d" -->
+                                <div class="col-md-2 col-sm-12 col-lg-2">
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control" id="to_date" placeholder="Date" name="to_date" required max="{{ tdate }}" value="">
+                                        <label for="date">To Date<sup class="text-danger">*</sup></label>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="d-sm-flex flex-wrap">
+                                    <div class="ms-auto">
+                                        <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light w-sm" id="search_records">Search</button>
+                                    </div>
+                                </div>   
+                            </div>
+                        </form>
+
+                        <!-- {!! Form::close() !!} -->
+                    </div>
+                </div>    
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-sm-flex flex-wrap">     
+                           <h4 class="card-title mb-4">Stock Management</h4>
+                           <div class="ms-auto">
+                            </div>
+                        </div>
+
+                        {% include 'common/alert.html' %}
+                        
+                        <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#stock_mgmt_list" role="tab">
+                                    <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                    <span class="d-none d-sm-block">Stock Management</span> 
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#update_stock_mgmt" role="tab">
+                                    <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                    <span class="d-none d-sm-block">ADD / Update Stock Management</span> 
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#stock_list" role="tab">
+                                    <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                    <span class="d-none d-sm-block">Product Stock</span> 
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content p-3 text-muted">
+                            <div class="tab-pane active" id="stock_mgmt_list" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="datatable"> 
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" style="width: 20px;">Sr.No</th>
+                                                <th scope="col" style="width: 20px;">Action</th>
+                                                <th scope="col" style="width: 20px;">Stock Type</th>
+                                                <th scope="col" style="white-space: normal;">Name</th>
+                                                <th scope="col" style="white-space: normal;">Mobile Number</th>
+                                                <th scope="col" style="white-space: normal;">Address</th>
+                                                <th scope="col" style="white-space: normal;">Date</th>
+                                                <th scope="col" style="white-space: normal;">Product Type</th>
+                                                <th scope="col" style="white-space: normal;">Product Name</th>
+                                                <th scope="col" style="white-space: normal;">Company Name</th>
+                                                <th scope="col" style="white-space: normal;">Weight</th>
+                                                <th scope="col" style="white-space: normal;">Quantity</th>
+                                                <th scope="col" style="white-space: normal;">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {%for sl in stock_list%}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>
+                                                    <!-- Code For Edit Button -->
+                                                    <a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Question' data-id='{{sl.id}}'
+                                                    data-protype_id='{{sl.protype_id}}' data-proname_id='{{sl.proname_id}}' data-comname_id='{{sl.comname_id}}'
+                                                    data-stock_type='{{sl.stock_type}}' data-dealer_name='{{sl.dealer_name}}' data-dealer_mob_number='{{sl.dealer_mob_number}}'
+                                                    data-dealer_address='{{sl.dealer_address}}' data-date='{{sl.date}}' data-product_weight='{{sl.product_weight}}'
+                                                    data-product_quantity='{{sl.product_quantity}}'
+                                                    data-purchase_amount='{{sl.purchase_amount}}'
+                                                     ><i class='far fa-edit' ></i></a>
+
+                                                    <!-- Code For Delete Button -->
+                                                    <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Question' data-id='{{sl.id}}'><i class='fas fa-trash-alt' ></i></button>
+                                                </td>
+                                                <td>{{sl.stock_type}}</td>
+                                                <td>{{sl.dealer_name}}</td>
+                                                <td>{{sl.dealer_mob_number}}</td>
+                                                <td>{{sl.dealer_address}}</td>
+                                                <td>{{sl.date}}</td>
+                                                <td>{{sl.product_type}}</td>
+                                                <td>{{sl.product_name}}</td>
+                                                <td>{{sl.company_name}}</td>
+                                                <td>{{sl.product_weight}}</td>
+                                                <td>{{sl.product_quantity}}</td>
+                                                <td>{{sl.purchase_amount}}</td>           
+                                            </tr>
+                                        {%endfor%}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="stock_list" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="stdatatable"> 
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" style="width: 20px;">Sr.No</th>
+                                                
+                                                <th scope="col" style="white-space: normal;">Product Type</th>
+                                                <th scope="col" style="white-space: normal;">Product Name</th>
+                                                <th scope="col" style="white-space: normal;">Stock Quantity</th>
+                                                <th scope="col" style="white-space: normal;">Sale Quantity</th>
+                                                <th scope="col" style="white-space: normal;">Balance Quantity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {%for psl in product_stock_list%}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{psl.product_type}}</td>
+                                                <td>{{psl.product_name}}</td>
+                                                <td>{{psl.total_stock_quantity}}</td>
+                                                <td>{{psl.total_bill_quantity}}</td>
+                                                <td>{{psl.total_bal_quantity}}</td>
+                                            </tr>
+                                        {%endfor%}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+         
+                            <div class="tab-pane" id="update_stock_mgmt" role="tabpanel">
+                                
+                                <form method="post" class="row" action="/stockmgmt/post_stock_rec/" enctype="multipart/form-data" id="stock_mgmt_form">
+                                        {% csrf_token %}
+
+                                    <input type="hidden" name="edit_id" id="edit_id" value="">
+
+                                    <div class="row">
+
+                                         <!-- Code For Dealer Details  -->
+
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-group mb-3">
+                                                <label for="stock_type" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Stock Type<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="stock_type" required name="stock_type">
+                                                    <option value="" disabled>Select Stock Type</option>
+                                                    <option value="Purchase"">Purchase</option>
+                                                    <option value="Return"">Return</option>
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                         <div class="col-md-3 col-sm-12 col-lg-3">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="dealer_name" placeholder="Enter Section Name" name="dealer_name" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                                <label for="dealer_name">Name<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="serror"></span>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="dealer_mob_number" maxlength="10" placeholder="Enter Section Name" name="dealer_mob_number" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                                <label for="dealer_mob_number">Mobile Number<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="serror"></span>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-12 col-lg-4">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="dealer_address" placeholder="Enter Section Name" name="dealer_address" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                                <label for="dealer_address">Address<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="serror"></span>
+                                            </div>
+                                        </div>
+
+                                        
+                                        <!-- Code For Product Type -->
+
+                                        <div class="col-md-4 col-sm-12 col-lg-4">
+                                            <div class="form-group mb-3">
+                                                <label for="product_type" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Product Type<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="product_type" required name="product_type">
+                                                    <option value="" disabled>Select Product Type</option>
+                                                {%for ptl in pro_typ_list%}
+                                                    <option value="{{ptl.id}}" data-product_type="{{ptl.product_type}}">{{ptl.product_type}}</option>
+                                                {%endfor%}
+                                                
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                         <!-- Code For Product Name -->
+
+                                         <div class="col-md-4 col-sm-12 col-lg-4">
+                                            <div class="form-group mb-3">
+                                                <label for="product_name" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Product Name<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="product_name" required name="product_name">
+                                                    <option value="" disabled>Select Product Name</option>
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                         <!-- Code For Company Name -->
+
+                                        <div class="col-md-4 col-sm-12 col-lg-4">
+                                            <div class="form-group mb-3">
+                                                <label for="company_name" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Company Name<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="company_name" required name="company_name">
+                                                    <option value="" disabled>Select Company Name</option>
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                         <!-- Code For Date Field -->
+
+                                         {% load tz %}  
+                                         <!-- Load timezone template tag (for date formatting) -->
+ 
+                                         {% now "Y-m-d" as tdate %}  
+                                         <!-- Get the current date in the format "Y-m-d" -->
+                                         <div class="col-md-2 col-sm-12 col-lg-2">
+                                             <div class="form-floating mb-3">
+                                                 <input type="date" class="form-control" id="date" placeholder="Date" name="date" required max="{{ tdate }}" value="">
+                                                 <label for="date">Date of Purchase<sup class="text-danger">*</sup></label>
+                                             </div>
+                                         </div>
+
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="product_weight" placeholder="Enter Section Name" name="product_weight" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                                <label for="product_weight">Product Weight<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="serror"></span>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="product_quantity" placeholder="Enter Section Name" name="product_quantity" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                                <label for="product_quantity">Product Quantity<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="serror"></span>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 col-sm-12 col-lg-4">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="purchase_amount" placeholder="Enter Section Name" name="purchase_amount" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                                <label for="purchase_amount">Purchase Amount<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="serror"></span>
+
+                                            </div>
+                                        </div>
+                                        <div class="d-sm-flex flex-wrap">
+                                            <div class="ms-auto">
+                                                <button type="submit" class="btn btn-primary waves-effect waves-light" id="add_stock_record"><i class="bx font-size-16 align-middle me-2"></i>Save</button>
+                                            </div>
+                                        </div>
+                                    </div>   
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+{% include 'common/delete_model.html' %}
+{% endblock content %}  
+
+{% block datatable_js %}
+    
+    <script src="{% static 'assets/libs/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('#datatable').dataTable();     
+            $('#stdatatable').dataTable();     
+
+        }); 
+    </script>
+{% endblock datatable_js %}
+{% block page_js %}
+
+<script src="{% static 'assets/libs/select2/js/select2.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+<script>
+
+    
+    $(document).ready(function(){
+        var $body = $("body");
+        
+        ///////////////////////////// Select 2 Fields For Drop Down //////////////////////
+        $('#stock_type,#s_stock_type').select2(); 
+        $('#product_type,#s_product_type').select2(); 
+        $('#product_name,#s_product_name').select2(); 
+        $('#company_name,#s_company_name').select2(); 
+
+
+        var categoryChangeCompleted = false;
+                    
+        // Function to set sub-category value
+        function setSubCategoryProName(proname_id) {
+            if (categoryChangeCompleted) {
+                // If category change is completed, set sub-category value
+                $("#product_name").val(proname_id).trigger('change');  
+            
+                categoryChangeCompleted = false; // reset false for next record edit, without page refresh.
+            }else {
+                // If category change is not yet completed, set a flag and delay setting the sub-category value
+                $(document).one('categoryChangeCompleted', function() {
+                    setSubCategoryProName(proname_id);
+                });
+            }
+        }
+
+        var categoryChangeCompletedCompany = false;
+                    
+        // Function to set sub-category value
+        function setSubCategoryComName(comname_id) {
+            if (categoryChangeCompletedCompany) {
+                // If category change is completed, set sub-category value
+                $("#company_name").val(comname_id).trigger('change');  
+            
+                categoryChangeCompletedCompany = false; // reset false for next record edit, without page refresh.
+            }else {
+                // If category change is not yet completed, set a flag and delay setting the sub-category value
+                $(document).one('categoryChangeCompletedCompany', function() {
+                    setSubCategoryComName(comname_id);
+                });
+            }
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // get product name from product type wise
+
+        $('#product_type').change(function(e)
+        {
+            var product_type = $(this).val();      // get the question value from the question field 
+            $("#product_name").empty();           // clear the product name
+
+            $.ajax({    
+                url: '/stockmgmt/get_productname/',
+                type :'get',
+                data : {product_type:product_type},
+                async: true,
+                cache: true,
+                dataType: 'json',
+                success: function(response) 
+                {
+                    console.log(response);
+
+                    //get question wise jyotishi salla.
+                    $('#product_name').append("<option value='' class='text-muted' selected disabled>"+'Select'+"</option>");
+                    
+                    $.each(response.product_name_list,function(index,row){
+
+                        //get question wise jyotishi salla.
+                        $('#product_name').append("<option value='"+row.id+"'>"+row.product_name+"</option>");
+                                        
+                    });
+                    
+                    // Set the flag to indicate that category change is completed
+                    categoryChangeCompleted = true;
+                            
+                    // Trigger a custom event to signal that category change is completed
+                    $(document).trigger('categoryChangeCompleted');
+                
+                }
+            });
+            
+        });
+
+        // get search product name from product type wise
+        $('#s_product_type').change(function(e)
+        {
+            var product_type = $(this).val();      // get the question value from the question field 
+            $("#s_product_name").empty();           // clear the product name
+
+            $.ajax({    
+                url: '/stockmgmt/get_productname/',
+                type :'get',
+                data : {product_type:product_type},
+                async: true,
+                cache: true,
+                dataType: 'json',
+                success: function(response) 
+                {
+                    console.log(response);
+
+                    //get question wise jyotishi salla.
+                    $('#s_product_name').append("<option value='' class='text-muted' selected disabled>"+'Select Product Name'+"</option>");
+                    
+                    $.each(response.product_name_list,function(index,row){
+
+                        //get question wise jyotishi salla.
+                        $('#s_product_name').append("<option value='"+row.id+"'>"+row.product_name+"</option>");
+                                        
+                    });
+                    
+                }
+            });
+            
+        });
+
+        // get company name from product name
+        $('#product_name').change(function(e)
+        {
+            var product_name = $(this).val(); 
+            var product_type= $('#product_type').val();  // get the question value from the question field 
+            //alert(product_type);
+            $("#company_name").empty();           // clear the product name
+
+            $.ajax({    
+                url: '/stockmgmt/get_companyname/',
+                type :'get',
+                data : {product_type:product_type, product_name:product_name},
+                async: true,
+                cache: true,
+                dataType: 'json',
+                success: function(response) 
+                {
+                    console.log(response);
+
+                    //get product type & product name wise company name.
+                    $('#company_name').append("<option value='' class='text-muted' selected disabled>"+'Select'+"</option>");
+                    
+                    $.each(response.company_name_list,function(index,row){
+
+                        //get question wise jyotishi salla.
+                        $('#company_name').append("<option value='"+row.id+"'>"+row.company_name+"</option>");
+                                        
+                    });
+                    
+                    // Set the flag to indicate that category change is completed
+                    categoryChangeCompletedCompany = true;
+                            
+                    // Trigger a custom event to signal that category change is completed
+                    $(document).trigger('categoryChangeCompletedCompany');
+                
+                },
+                complete:function(response){
+                    // For Button Loader
+                    // $("#att_records").prop('disabled', false); 
+                    // $("#jyo_upays").prop('disabled', false);
+                    
+                }
+            });
+            
+        });
+    
+
+        // get search company name from product name
+        $('#s_product_name').change(function(e)
+        {
+            var product_name = $(this).val(); 
+            var product_type= $('#s_product_type').val();  // get the product type value 
+            //alert(product_type);
+            $("#s_company_name").empty();           // clear the product name
+
+            $.ajax({    
+                url: '/stockmgmt/get_companyname/',
+                type :'get',
+                data : {product_type:product_type, product_name:product_name},
+                async: true,
+                cache: true,
+                dataType: 'json',
+                success: function(response) 
+                {
+                    console.log(response);
+
+                    //get product type & product name wise company name.
+                    $('#s_company_name').append("<option value='' class='text-muted' selected disabled>"+'Select Company Name'+"</option>");
+                    
+                    $.each(response.company_name_list,function(index,row){
+
+                        //get question wise jyotishi salla.
+                        $('#s_company_name').append("<option value='"+row.id+"'>"+row.company_name+"</option>");
+                                        
+                    });
+                }
+            });
+            
+        });
+        
+        /////////////////////////////////////////////////////
+        // For Department Validation
+        
+        
+
+
+        ////////// Edit Code ///////
+
+        // On Edit Button Update Salla 
+        $(document).on("click",'.editU',function()
+        {
+            var id = $(this).data('id');
+            if(id !=""){
+                // Update Salla 
+                var protype_id = $(this).data('protype_id');
+                var proname_id = $(this).data('proname_id');
+                var comname_id = $(this).data('comname_id');
+                var stock_type = $(this).data('stock_type');
+                var dealer_name = $(this).data('dealer_name');
+                var dealer_mob_number = $(this).data('dealer_mob_number');
+                var dealer_address = $(this).data('dealer_address');
+                var date = $(this).data('date');
+                var product_weight = $(this).data('product_weight');
+                var product_quantity = $(this).data('product_quantity');
+                var purchase_amount = $(this).data('purchase_amount');
+                
+                //Redirect to company name page
+                $('.nav-tabs a[href="#update_stock_mgmt"]').tab('show');
+
+                $('#edit_id').val(id);                               //Set Record id
+                $("#product_type").val(protype_id).trigger("change"); //Set Record For Dropdown
+                setSubCategoryProName(proname_id);                   //Select Sub Category Fun
+                setSubCategoryComName(comname_id);
+                $("#stock_type").val(stock_type).trigger("change"); //Set Record id
+                $('#dealer_name').val(dealer_name);                 //Set Record id
+                $('#dealer_mob_number').val(dealer_mob_number);     //Set Record id
+                $('#dealer_address').val(dealer_address);           //Set Record id
+                $('#date').val(date);                               //Set Record id
+                $('#product_weight').val(product_weight);           //Set Record id
+                $('#product_quantity').val(product_quantity);       //Set Record id
+                $('#purchase_amount').val(purchase_amount);         //Set Record id
+
+            }
+        });
+
+            
+        // On Delete Button Delete Client Information
+
+         // On Delete Button Delete Client Information
+         $(document).on("click",'.delI',function()
+         {
+             var id = $(this).data('id');
+             //$('#id').val(id);
+             $('#delete_record_modal form').attr("action","/stockmgmt/stock_mgmt_delete/"+id+"/");
+             $('#delete_record_modal').modal('show');
+         });
+ 
+  
+    });
+</script>
+
+{% endblock page_js %}

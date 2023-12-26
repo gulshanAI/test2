@@ -1,0 +1,166 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0 font-size-18">Profile</h4>
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <!-- <li class="breadcrumb-item"><a href="dashboard/dashboard/">Dashboard</a></li> -->
+                            <li class="breadcrumb-item active">Profile</li>
+                        </ol>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+        {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="card overflow-hidden">
+                    <div class="bg-primary bg-soft">
+                        <div class="row">
+                            <div class="col-7">
+                                <div class="text-primary p-3">
+                                    <h5 class="text-primary">Welcome !</h5>
+                                    <p>{{ request.session.name }}'s Profile</p>
+                                </div>
+                            </div>
+                            <div class="col-5 align-self-end">
+                                <img src="{% static 'assets/images/profile-img.png' %}" alt="" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="avatar-lg profile-user-wid mb-4">
+                                    
+                                    <img src="{% static 'assets/files/company/logo.png' %}" alt="" class="img-thumbnailnew">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-9">
+                                <div class="pt-4">
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h5 class="font-size-15">{{ request.session.name }}</h5>
+                                            <span class="font-size-12 text-muted">
+                                               
+                                               
+                                            </span><br>
+                                            <span class="font-size-12">Mob. : {{ request.session.name }}</span><br>
+                                            <span class="font-size-12">Email : {{ request.session.name }}</span>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <!-- @include('common.alert') -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="col-xl-8">
+                
+                <!-- end row -->
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-sm-flex flex-wrap">
+                                    <h4 class="card-title mb-4">Update Profile</h4>
+                                </div>
+                                <!-- {!! Form::open(['class'=>"form-horizontal",'method'=>"post",'url'=>'profile_edt']) !!} -->
+                                <form method="post" action="/updateprofile/">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="id" value="{{obj.id}}">
+                                    <div class="col-md-12">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingnameInput" placeholder="Enter Name" value="{{obj.name}}" required name="username">
+                                            <label for="floatingnameInput">Name</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="col-md-12">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingnameInput" placeholder="Enter Mobile" value="{{ request.session.name }}" required name="mobile">
+                                            <label for="floatingnameInput">Mobile</label>
+                                        </div>
+                                    </div> -->
+
+
+                                    <div class="col-md-12">
+                                        <div class="form-floating mb-3">
+                                            <input type="email" class="form-control" id="email" placeholder="Enter Email address" value="{{obj.email}}" required name="email">
+                                            <label for="email">Email address</label>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <button type="submit" class="btn btn-primary w-md">Update</button>
+                                    </div>
+                                </form>
+                                <!-- {!! Form::close() !!} -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-sm-flex flex-wrap">
+                                    <h4 class="card-title mb-4">Update Password</h4>
+                                </div>
+                                <!-- {!! Form::open(['class'=>"form-horizontal",'method'=>"post",'url'=>'check_pass','id'=>'update_password_form']) !!} -->
+                                <form method="post" action="/changepassword/">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="pass_id" value="{{obj.id}}">
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control" id="current_password" name="current_password" placeholder="Enter Current Password" required>
+                                        <label for="current_password">Current Password</label>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Enter New Password" required>
+                                        <label for="new_password">New Password</label>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Enter Confirm Password" required>
+                                        <label for="confirm_password">Confirm Password</label>
+                                        <span id="msg"></span>
+                                    </div>
+                                    
+                                    <div>
+                                        <button type="submit" class="btn btn-primary w-md">Update</button>
+                                    </div>
+                                </form>
+                                <!-- {!! Form::close() !!} -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+        
+    </div> <!-- container-fluid -->
+</div>
+{% endblock content %}          

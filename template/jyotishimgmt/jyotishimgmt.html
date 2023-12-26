@@ -1,0 +1,1024 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block meta %}
+    <title>DMS - Dashboard</title>
+{% endblock meta %}
+
+{% block datatable_css %}
+    <link rel="stylesheet" href="{% static 'assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css'%}">
+{% endblock datatable_css %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/libs/select2/css/select2.min.css'%}">
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+
+
+    <style>
+        .form-floating>.form-control, .form-floating>.form-select {
+            height: calc(2.8rem + 1px) !important;
+            padding: 1rem .75rem;
+        }
+        .form-floating>.textuti {
+            height: calc(2.8rem + 30px) !important;
+        }
+        .select2
+        {
+            width: 100% !important;
+        }
+        .amsify-suggestags-list{
+        z-index: 1 !important;
+        width: 100% !important;
+        }
+        textarea,
+        .textarea {
+        min-height: inherit;
+        height: auto;
+        }
+        .form-check
+        {
+            display: inline-block;
+        }
+
+        .dtr-title{
+            font-weight: 600;
+        }
+
+        /** SPINNER CREATION **/
+
+        .loader {
+        position: relative;
+        text-align: center;
+        margin: 15px auto 35px auto;
+        z-index: 9999;
+        display: block;
+        width: 80px;
+        height: 80px;
+        border: 10px solid rgba(0, 0, 0, .3);
+        border-radius: 50%;
+        border-top-color: #000;
+        animation: spin 1s ease-in-out infinite;
+        -webkit-animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+        }
+
+        @-webkit-keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+        }
+    </style>
+{% endblock page_css %}
+
+{% block content %}
+
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item active">Jyotishi Management</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-sm-flex flex-wrap">     
+                           <h4 class="card-title mb-4">Jyotishi Management</h4>
+                           <div class="ms-auto">
+                            </div>
+                        </div>
+
+                        {% include 'common/alert.html' %}
+                        
+                        <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#jyo_mgmt_list" role="tab">
+                                    <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                    <span class="d-none d-sm-block">Jyotishi Management</span> 
+                                </a>
+                            </li>
+                           
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#update_jyo_mgmt" role="tab">
+                                    <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                    <span class="d-none d-sm-block">ADD / Update Jyotishi Management</span> 
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content p-3 text-muted">
+                            <div class="tab-pane active" id="jyo_mgmt_list" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="datatable"> 
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" style="white-space: normal;">Sr.No</th>
+                                                <th scope="col" style="white-space: normal;">Action</th>
+                                                <th scope="col" style="white-space: normal;">Client Name</th>
+                                                <th scope="col" style="white-space: normal;">Date</th>
+                                                <th scope="col" style="white-space: normal;">Jyotishi Question</th>
+                                                <th scope="col" style="white-space: normal;">Jyotishi Upay</th>
+                                                <th scope="col" style="white-space: normal;">Jyotishi Salla</th>
+                                                <th scope="col" style="white-space: normal;">Vishes Salla</th>
+                                                <th scope="col" style="white-space: normal;">Karmic Salla</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="jyo_mgmt_records">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+         
+                            <div class="tab-pane" id="update_jyo_mgmt" role="tabpanel">
+                                
+                                <form class="row" id="jyo_mgmt_form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="edit_id" id="edit_id" value="">
+
+                                    <div class="row">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-group mb-3">
+                                                <label for="client_name" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Client Name<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="client_name" required name="client_name">
+                                                    <option value="" disabled>Select Client Name</option>
+                                                {%for cl in client_list%}
+                                                    <option value="{{cl.id}}">{{cl.client_name}}</option>
+                                                {%endfor%}
+                                                
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                        {% load tz %}  
+                                        <!-- Load timezone template tag (for date formatting) -->
+
+                                        {% now "Y-m-d" as tdate %}  
+                                        <!-- Get the current date in the format "Y-m-d" -->
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-floating mb-3">
+                                                <input type="date" class="form-control" id="date" placeholder="Date" name="date" required max="{{ tdate }}" value="">
+                                                <label for="date">Date<sup class="text-danger">*</sup></label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Code For Jyotishi Question-->
+
+                                         <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-group mb-3">
+                                                <label for="jyo_questions" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Jyotishi Question<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="jyo_questions" required name="jyo_questions">
+                                                    <option value="" disabled>Select Jyotishi Question</option>
+                                                {%for jql in jyo_que_list%}
+                                                    <option value="{{jql.id}}" data-jyo_question="{{jql.jyo_questions}}">{{jql.jyo_questions}}</option>
+                                                {%endfor%}
+                                                
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">Jyotishi Question</label>  
+                                                <textarea  id="jyo_que_summernote" name="jyo_que_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                        
+                                        <!-- Code For Jyotishi Upay -->
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <label for="jyo_upay" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Jyotishi Upay<sup class="text-danger">*</sup></label>
+                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="jyo_upay" name="jyo_upay[]" placeholder="Jyotishi Upay">
+                                                    {%for jul in jyo_upay_list%}
+                                                    <option value="{{jul.id}}" data-jyo_upay="{{jul.jyo_upay}}">{{jul.jyo_upay | safe}}</option>
+                                                {%endfor%}
+                    
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">Jyotishi Upay</label>  
+                                                <textarea  id="jyo_upay_summernote" name="jyo_upay_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                        <!-- Code For Jyotishi Upay -->
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <label for="jyo_salla" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Jyotishi Salla<sup class="text-danger">*</sup></label>
+                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="jyo_salla" name="jyo_salla[]" placeholder="Jyotishi Salla">
+                    
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">Jyotishi Salla</label>  
+                                                <textarea  id="jyo_salla_summernote" name="jyo_salla_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                         <!-- Code For Vishes Salla -->
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <label for="vis_salla" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Vishes Salla<sup class="text-danger">*</sup></label>
+                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="vis_salla" name="vis_salla[]" placeholder="Vishes Salla">
+                    
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">Vishes Salla</label>  
+                                                <textarea  id="vis_salla_summernote" name="vis_salla_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                         <!-- Code For Karmic Upay -->
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <label for="kar_upay" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Karmic Upay<sup class="text-danger">*</sup></label>
+                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="kar_upay" name="kar_upay[]" placeholder="Karmic Upay">
+                    
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">Karmic Upay</label>  
+                                                <textarea  id="kar_upay_summernote" name="kar_upay_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                        <div class="d-sm-flex flex-wrap">
+                                            <div class="ms-auto">
+                                                <button type="button" class="btn btn-primary waves-effect waves-light" id="add_jyo_record"><i class="bx font-size-16 align-middle me-2"></i>Save</button>
+                                            </div>
+                                        </div>
+                                    </div>   
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+{% include 'common/delete_model.html' %}
+{% endblock content %}  
+
+{% block datatable_js %}
+    
+    <script src="{% static 'assets/libs/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('#datatable').dataTable();     
+        }); 
+    </script>
+{% endblock datatable_js %}
+{% block page_js %}
+
+<script src="{% static 'assets/libs/select2/js/select2.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+<script>
+
+    
+    $(document).ready(function(){
+        var $body = $("body");
+        
+ //////////////////////////////////////////////// Select 2 Fields For Drop Down ///////////////////////////////////////////
+
+
+        $('#client_name').select2(); 
+        $('#jyo_questions').select2(); 
+        $('#jyo_upay').select2(); 
+        $('#jyo_salla').select2(); 
+        $('#vis_salla').select2(); 
+        $('#kar_upay').select2(); 
+
+
+/////////////////////////////////////////////////// For set/unset select field//////////////////////////////////////////
+
+
+        $('.nav-tabs a[href="#update_jyo_mgmt"]').click(function()
+        {
+            
+            $("#client_name").val("").trigger("change");
+            $("#jyo_questions").val("").trigger("change"); 
+            $("#jyo_upay").val("").trigger("change"); 
+
+            $("#jyo_salla").val("").trigger("change");
+            $("#vis_salla").val("").trigger("change"); 
+            $("#kar_upay").val("").trigger("change"); 
+
+            //$("#jyo_salla,#vis_salla,#kar_upay").empty(); 
+            $('#jyo_que_summernote').summernote('code', ""); 
+            $('#jyo_upay_summernote').summernote('code', ""); 
+            $('#jyo_salla_summernote').summernote('code', "");
+            $('#vis_salla_summernote').summernote('code', ""); 
+            $('#kar_upay_summernote').summernote('code', "");
+        });
+
+
+//////////////////////// CODE TO CALL SUB CATEGORY OPTION SETTING ONLY WHEN CATEGORY ON CHANGE EVENT IS COMPLETED. /////////////       
+                                    // Flag to track whether category change is completed //
+       
+
+        var categoryChangeCompletedJyoSalla = false;
+                    
+        // Function to set sub-category value
+        function setSubCategoryJyoSallaValue(jyo_sallas) {
+            if (categoryChangeCompletedJyoSalla) {
+                // If category change is completed, set sub-category value
+
+                //$("#jyo_salla").val(jyo_salla_id).trigger('change');  
+                $.each(jyo_sallas,function(index,value)
+                {
+                    $("#jyo_salla option[value='"+value+"']").attr('selected','selected').change();
+                });
+                categoryChangeCompletedJyoSalla = false; // reset false for next record edit, without page refresh.
+            } else {
+                // If category change is not yet completed, set a flag and delay setting the sub-category value
+                $(document).one('categoryChangeCompletedJyoSalla', function() {
+                    setSubCategoryJyoSallaValue(jyo_sallas);
+                });
+            }
+        }
+       
+        var categoryChangeCompletedVisSalla = false;
+                    
+        // Function to set sub-category value
+        function setSubCategoryVisSallaValue(vis_sallas) {
+            if (categoryChangeCompletedVisSalla) {
+                // If category change is completed, set sub-category value
+                //$("#vis_salla").val(vis_salla_id).trigger('change'); 
+                $.each(vis_sallas,function(index,value)
+                {
+                    $("#vis_salla option[value='"+value+"']").attr('selected','selected').change();
+                }); 
+                categoryChangeCompletedVisSalla = false; // reset false for next record edit, without page refresh.
+            } else {
+                // If category change is not yet completed, set a flag and delay setting the sub-category value
+                $(document).one('categoryChangeCompletedVisSalla', function() {
+                    setSubCategoryVisSallaValue(vis_sallas);
+                });
+            }
+        }
+        
+        var categoryChangeCompletedKarUpay = false;
+                    
+        // Function to set sub-category value
+        function setSubCategoryKarUpayValue(kar_upays) {
+            if (categoryChangeCompletedKarUpay) {
+                // If category change is completed, set sub-category value
+                //$("#kar_upay").val(kar_upay_id).trigger('change');  
+                $.each(kar_upays,function(index,value)
+                {
+                    $("#kar_upay option[value='"+value+"']").attr('selected','selected').change();
+                }); 
+                categoryChangeCompletedKarUpay = false; // reset false for next record edit, without page refresh.
+            } else {
+                // If category change is not yet completed, set a flag and delay setting the sub-category value
+                $(document).one('categoryChangeCompletedKarUpay', function() {
+                    setSubCategoryKarUpayValue(kar_upays);
+                });
+            }
+        }
+
+
+/////////////////////////////////////////// Codes for Add Summernote ///////////////////////////////////////
+
+
+        $('#jyo_que_summernote').summernote({
+            placeholder: '',
+            tabsize: 2,
+            height: 50,
+            toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+
+        $('#jyo_upay_summernote').summernote({
+            placeholder: '',
+            tabsize: 2,
+            height: 100,
+            toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+
+        $('#jyo_salla_summernote').summernote({
+            placeholder: '',
+            tabsize: 2,
+            height: 100,
+            toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+
+        $('#vis_salla_summernote').summernote({
+            placeholder: '',
+            tabsize: 2,
+            height: 100,
+            toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+
+        $('#kar_upay_summernote').summernote({
+            placeholder: '',
+            tabsize: 2,
+            height: 100,
+            toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+
+
+////////////////////////////////////////// Codes For Set Data on Summernote ////////////////////////////////////
+
+        // on change (While Selecting Question he want to change that question, so this code will provide or set that question on that summernote)
+
+
+        $('#jyo_questions').change(function(e)
+        {
+            //var jyo_question = $(this).data('jyo_question');
+            // Get the selected option
+            var jyo_question = $(this).find("option:selected");
+            //alert(jyo_question);
+
+            // Get the value of the "data-custom" attribute of the selected option using .data()
+            var jyo_question_value = jyo_question.data("jyo_question");
+
+            $('#jyo_que_summernote').summernote('code', jyo_question_value);
+                //While Updating the data this line sets the data to the Summer Note area
+
+
+            //alert(jyo_question_value);
+            
+        });
+
+        $('#jyo_upay').change(function (e) {
+            // Get the selected options
+            var selectedOptions = $(this).find("option:selected");
+        
+            // Collect the values of the selected options
+            var jyo_upay_values = [];
+            selectedOptions.each(function () {
+                jyo_upay_values.push($(this).data("jyo_upay"));
+            });
+        
+            // Generate HTML content based on the selected values
+            var content = '';
+            if (jyo_upay_values.length > 0) {
+                jyo_upay_values.forEach(function (data) {
+                    content += '<p>' + data + '</p>';
+                });
+            }
+        
+            // Set the Summernote content
+            $('#jyo_upay_summernote').summernote('code', content);
+
+            
+
+        });
+
+        $('#jyo_salla').change(function(e)
+        {
+            //var jyo_question = $(this).data('jyo_question');
+            // Get the selected option
+            var jyo_salla = $(this).find("option:selected");
+            //alert(jyo_question);
+
+            // Collect the values of the selected options
+            var jyo_salla_value = [];
+            jyo_salla.each(function () {
+                jyo_salla_value.push($(this).data("jyo_salla"));
+            });
+        
+            // Generate HTML content based on the selected values
+            var content = '';
+            if (jyo_salla_value.length > 0) {
+                jyo_salla_value.forEach(function (data) {
+                    content += '<p>' + data + '</p>';
+                });
+            }
+        
+            // Set the Summernote content
+            $('#jyo_salla_summernote').summernote('code', content);
+            
+        });
+
+        $('#vis_salla').change(function(e)
+        {
+            //var jyo_question = $(this).data('jyo_question');
+            // Get the selected option
+            var vis_salla = $(this).find("option:selected");
+            //alert(jyo_question);
+        
+            // Collect the values of the selected options
+            var vis_salla_value = [];
+            vis_salla.each(function () {
+                vis_salla_value.push($(this).data("vis_salla"));
+            });
+        
+            // Generate HTML content based on the selected values
+            var content = '';
+            if (vis_salla_value.length > 0) {
+                vis_salla_value.forEach(function (data) {
+                    content += '<p>' + data + '</p>';
+                });
+            }
+        
+            // Set the Summernote content
+            $('#vis_salla_summernote').summernote('code', content);
+            
+                
+        });
+
+        $('#kar_upay').change(function(e)
+        {
+            
+            //var jyo_question = $(this).data('jyo_question');
+            // Get the selected option
+            var kar_upay = $(this).find("option:selected");
+            //alert(jyo_question);
+
+            // Collect the values of the selected options
+            var kar_upay_value = [];
+            kar_upay.each(function () {
+                kar_upay_value.push($(this).data("kar_upay"));
+            });
+        
+            // Generate HTML content based on the selected values
+            var content = '';
+            if (kar_upay_value.length > 0) {
+                kar_upay_value.forEach(function (data) {
+                    content += '<p>' + data + '</p>';
+                });
+            }
+        
+            // Set the Summernote content
+            $('#kar_upay_summernote').summernote('code', content);
+            
+        });
+
+
+/////////////////////////////////////////// Ajax Code : on Question Change Set Dropdown Values /////////////////////////////
+
+
+        // get salla from question wise
+        $('#jyo_questions').change(function(e)
+        {
+            var jyo_questions = $(this).val();      // get the question value from the question field 
+            //alert(jyo_questions);
+            $("#jyo_salla").empty();
+            $("#vis_salla").empty();
+            $("#kar_upay").empty();
+            // $("#att_records").prop('disabled', true);
+
+
+            $.ajax({    
+                url: '/jyotishimgmt/get_jyosalla/',
+                type :'get',
+                data : {jyo_questions:jyo_questions},
+                async: true,
+                cache: true,
+                dataType: 'json',
+                success: function(response) 
+                {
+                    console.log(response);
+
+                    //get question wise jyotishi salla.
+                   // $('#jyo_salla').append("<option value='' class='text-muted' selected disabled>"+'Select salla'+"</option>");
+                    $.each(response.jyo_salla_list,function(index,row){
+
+                        //get question wise jyotishi salla.
+                        $('#jyo_salla').append("<option value='"+row.id+"' data-jyo_salla='"+row.jyo_salla+"'>"+row.jyo_salla+"</option>");
+                                        
+                    });
+
+                    
+                    // Set the flag to indicate that category change is completed
+                    categoryChangeCompletedJyoSalla = true;
+                            
+                    // Trigger a custom event to signal that category change is completed
+                    $(document).trigger('categoryChangeCompletedJyoSalla');
+
+                    //get question wise Vishes salla.
+                   // $('#vis_salla').append("<option value='' class='text-muted' selected disabled>"+'Select salla'+"</option>");
+                    $.each(response.vis_salla_list,function(index,row){
+    
+                        //get question wise Vishes salla.
+                        $('#vis_salla').append("<option value='"+row.id+"' data-vis_salla='"+row.vis_salla+"'>"+row.vis_salla+"</option>");
+                                        
+                    });
+
+                    // Set the flag to indicate that category change is completed
+                    categoryChangeCompletedVisSalla = true;
+                            
+                    // Trigger a custom event to signal that category change is completed
+                    $(document).trigger('categoryChangeCompletedVisSalla');
+
+                    
+
+
+                    //get question wise Karmic Upay.
+                    //$('#kar_upay').append("<option value='' class='text-muted' selected disabled>"+'Select Upay'+"</option>");
+                    $.each(response.kar_upay_list,function(index,row){
+    
+                        //get question wise Karmic Upay.
+                        $('#kar_upay').append("<option value='"+row.id+"' data-kar_upay='"+row.kar_upay+"'>"+row.kar_upay+"</option>");
+                                        
+                    });
+
+                    // Set the flag to indicate that category change is completed
+                    categoryChangeCompletedKarUpay = true;
+                            
+                    // Trigger a custom event to signal that category change is completed
+                    $(document).trigger('categoryChangeCompletedKarUpay');
+                
+                },
+                complete:function(response){
+                    // For Button Loader
+                    // $("#att_records").prop('disabled', false); 
+                    // $("#jyo_upays").prop('disabled', false);
+                    
+                }
+            });
+            
+
+        });
+
+
+////////////////////////////////////////////// Ajax Code : Code For Data Listing ////////////////////////////////////////////////////////
+
+
+        getJyoRecords();
+        function getJyoRecords(){
+            $.ajax({
+                headers:{
+                    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+                },
+                url:'/jyotishimgmt/get_jyo_records/',
+                type :'get',
+                data : {},
+                cache: false,
+                dataType: 'json',                 
+                success:function(data){
+                    console.log(data);
+                    
+                    $("#datatable").DataTable().destroy();
+                    content ="";
+                    var i = 0;                
+                    $.each(data.jyo_mgmt_list,function(index,row){
+                
+                        content +="<tr>";
+                        content +="<td>"+ ++i  +"</td>";
+            
+                        content +="<td>";
+
+                            content +=" <a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Jyotishi Mgmt Record' data-id='"+row.id+"' data-client_id='"+row.client_id_id+"' data-client_name='"+row.client_name+"' data-date_field='"+row.date_field+"'data-jyo_questions='"+row.jyo_questions+"' data-jyo_salla='"+row.jyo_salla+"' data-jyo_upay='"+row.jyo_upay+"' data-kar_upay='"+row.kar_upay+"' data-vis_salla='"+row.vis_salla+"' data-jyo_que_id='"+row.jyo_que_id+"' data-jyo_upay_id='"+row.jyo_upay_id+"' data-jyo_salla_id='"+row.jyo_salla_id+"' data-vis_salla_id='"+row.vis_salla_id+"' data-kar_upay_id='"+row.kar_upay_id+"'><i class='far fa-edit'></i></a>";
+
+                            content +=" <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Jyotishi Mgmt Record' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+
+                            content +=" <a class='btn btn-outline-secondary btn-sm' href='/jyotishimgmt/dowload_jyotishi_pdf/"+row.id+"' data-bs-toggle='tooltip' data-bs-placement='top' title='Download Jyotishi PDF' data-id='"+row.id+"'><i class='far fa-download'></i></a>"
+                            
+                        content +="</td>";
+
+                        content +="<td>"+row.client_name+"</td>";
+                        content +="<td>"+row.date_field+"</td>";
+
+                    
+                        if(row.jyo_questions != null){
+                            content +="<td>"+row.jyo_questions+"</td>";
+                        }else{
+                            content +="<td> - </td>";
+                        }
+
+                        if(row.jyo_upay != null){
+                            content +="<td>"+row.jyo_upay+"</td>";
+                        }else{
+                            content +="<td> - </td>";
+                        }
+
+                        if(row.jyo_salla != null){
+                            content +="<td>"+row.jyo_salla+"</td>";
+                        }else{
+                            content +="<td> - </td>";
+                        }
+
+                        if(row.vis_salla != null){
+                            content +="<td>"+row.vis_salla+"</td>";
+                        }else{
+                            content +="<td> - </td>";
+                        }
+
+                        if(row.kar_upay != null){
+                            content +="<td>"+row.kar_upay+"</td>";
+                        }else{
+                            content +="<td> - </td>";
+                        }
+
+                        
+                        content += "</tr>";
+                    });
+                    
+                    $("#jyo_mgmt_records").html(content); //For append html data
+                    $('#datatable').dataTable();
+                }
+            });
+        }
+
+
+///////////////////////////////////// On Clicking The Button Add/Update Jyotishi Record This Code Will Work. /////////////////////
+
+
+        $(document).on("click",'#add_jyo_record',function()
+        {        
+            var edit_id= $('#edit_id').val();
+            var client_name= $('#client_name').val();
+            var date= $('#date').val();
+
+            var jyo_questions= $('#jyo_questions').val();
+            var jyo_que_summernote = $('#jyo_que_summernote').summernote('code'); // Get the Summernote content
+            
+            var select = document.getElementById("jyo_upay");
+            var jyo_upay = [];
+            for (var i = 0; i < select.options.length; i++) {
+                if (select.options[i].selected) {
+                    jyo_upay.push(select.options[i].value);
+                }
+            }
+            var jyo_upay = jyo_upay.join(',');
+            var jyo_upay_summernote = $('#jyo_upay_summernote').summernote('code'); // Get the Summernote content
+
+            
+            var select = document.getElementById("jyo_salla");
+            var jyo_salla = [];
+            for (var i = 0; i < select.options.length; i++) {
+                if (select.options[i].selected) {
+                    jyo_salla.push(select.options[i].value);
+                }
+            }
+            var jyo_salla = jyo_salla.join(',');
+            var jyo_salla_summernote = $('#jyo_salla_summernote').summernote('code'); // Get the Summernote content
+
+            var select = document.getElementById("vis_salla");
+            var vis_salla = [];
+            for (var i = 0; i < select.options.length; i++) {
+                if (select.options[i].selected) {
+                    vis_salla.push(select.options[i].value);
+                }
+            }
+            var vis_salla = vis_salla.join(',');
+            var vis_salla_summernote = $('#vis_salla_summernote').summernote('code'); // Get the Summernote content
+
+
+            var select = document.getElementById("kar_upay");
+            var kar_upay = [];
+            for (var i = 0; i < select.options.length; i++) {
+                if (select.options[i].selected) {
+                    kar_upay.push(select.options[i].value);
+                }
+            }
+            var kar_upay = kar_upay.join(',');
+            var kar_upay_summernote = $('#kar_upay_summernote').summernote('code'); // Get the Summernote content
+         
+            // The Contain on Form Which We Feed, so it will send the data to view Function for Saving purpose.
+            $.ajax({
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                url:'/jyotishimgmt/post_jyo_rec/',
+                type :'post',
+                data : {edit_id:edit_id,client_name:client_name,date:date,jyo_que_summernote:jyo_que_summernote,jyo_upay_summernote:jyo_upay_summernote,jyo_salla_summernote:jyo_salla_summernote,vis_salla_summernote:vis_salla_summernote,kar_upay_summernote:kar_upay_summernote,jyo_questions:jyo_questions,jyo_upay:jyo_upay,jyo_salla:jyo_salla,vis_salla:vis_salla,kar_upay:kar_upay},
+                async: false,
+                cache: true,
+                dataType: 'json',
+                success:function(response){
+                    console.log(response);
+
+                    if (response.status==true) {  
+                        //$('#jyo_mgmt_form')[0].reset()  
+                        
+
+                        //$("#part_cat").val("").trigger("change"); 
+                        getJyoRecords();
+
+                        // ACTIVE PANE AND LINK
+                        $('.nav-tabs a[href="#jyo_mgmt_list"]').tab('show');
+
+                        //For Notification
+                        toastr.options.timeOut = 5000;
+                        toastr.options.positionClass = 'toast-top-right';
+                        toastr.options.showEasing= 'swing';
+                        toastr.options.hideEasing= 'linear';
+                        toastr.options.showMethod= 'fadeIn';
+                        toastr.options.hideMethod= 'fadeOut';
+                        toastr.options.closeButton= true;
+                        toastr.success(response.message);
+            
+                    }else{
+
+                        //For Notification
+                        toastr.options.timeOut = 5000;
+                        toastr.options.positionClass = 'toast-top-right';
+                        toastr.options.showEasing= 'swing';
+                        toastr.options.hideEasing= 'linear';
+                        toastr.options.showMethod= 'fadeIn';
+                        toastr.options.hideMethod= 'fadeOut';
+                        toastr.options.closeButton= true;
+                        toastr.error(response.message);
+                    }
+                }
+            });
+    
+        }); 
+        
+
+///////////////////////////////////////// On Edit Button Update Client Information ///////////////////////////////////////////
+
+
+        $(document).on("click",'.editU',function()
+        {
+            var id = $(this).data('id');
+            if(id !=""){
+                var client_id = $(this).data('client_id');
+                var date_field = $(this).data('date_field');
+                var jyo_questions = $(this).data('jyo_questions');
+                var jyo_upay = $(this).data('jyo_upay');
+                var jyo_salla = $(this).data('jyo_salla');
+                var vis_salla = $(this).data('vis_salla');
+                var kar_upay = $(this).data('kar_upay');
+                
+                var jyo_que_id = $(this).data('jyo_que_id');                      // Select Dropdown record id
+                
+                var jyo_upay_id = $(this).data('jyo_upay_id');                    // Select Dropdown record id
+                var jyo_upays=new Array();
+                if (jyo_upay_id.toString().indexOf(',')>-1)
+                { 
+                    var jyo_upays=jyo_upay_id.split(',');
+                }
+                else
+                {
+                    jyo_upays[0]=jyo_upay_id.toString();
+                }
+
+
+                var jyo_salla_id = $(this).data('jyo_salla_id');              // Select Dropdown record id   
+                var jyo_sallas=new Array();
+                if (jyo_salla_id.toString().indexOf(',')>-1)
+                { 
+                    var jyo_sallas=jyo_salla_id.split(',');
+                }else{
+                    jyo_sallas[0]=jyo_salla_id.toString();
+                }
+
+
+                var vis_salla_id = $(this).data('vis_salla_id');            // Select Dropdown record id
+                var vis_sallas=new Array();
+                if (vis_salla_id.toString().indexOf(',')>-1)
+                { 
+                    var vis_sallas=vis_salla_id.split(',');
+                }
+                else
+                {
+                    vis_sallas[0]=vis_salla_id.toString();
+                }
+                
+
+                var kar_upay_id = $(this).data('kar_upay_id');              // Select Dropdown record id
+                var kar_upays=new Array();
+                if (kar_upay_id.toString().indexOf(',')>-1)
+                { 
+                    var kar_upays=kar_upay_id.split(',');
+                }
+                else
+                {
+                    kar_upays[0]=kar_upay_id.toString();
+                }
+
+                $('.nav-tabs a[href="#update_jyo_mgmt"]').tab('show');
+
+                $('#edit_id').val(id);
+                // $('#client_name').val(client_id);
+                $("#client_name").val(client_id).trigger("change");
+                $('#date').val(date_field); 
+
+                $("#jyo_questions").val(jyo_que_id).trigger("change");
+                $('#jyo_que_summernote').summernote('code', jyo_questions);
+
+                $.each(jyo_upays,function(index,value)
+                {
+                    $("#jyo_upay option[value='"+value+"']").attr('selected','selected').change();
+                });
+
+                $('#jyo_upay_summernote').summernote('code', jyo_upay);
+
+
+                //setSubCategoryJyoSallaValue(jyo_sallas);
+                //setSubCategoryVisSallaValue(vis_sallas);
+                //setSubCategoryKarUpayValue(kar_upays);
+
+                $('#jyo_salla_summernote').summernote('code', jyo_salla);
+                $('#vis_salla_summernote').summernote('code', vis_salla);
+                $('#kar_upay_summernote').summernote('code', kar_upay);
+            }
+        });
+
+
+///////////////////// On Delete Button Delete Client Information //////////////////////////////////////////
+
+
+        $(document).on("click",'.delI',function()
+        {
+            var id = $(this).data('id');
+            //$('#id').val(id);
+            $('#delete_record_modal form').attr("action","/jyotishimgmt/jyo_mgmt_delete/"+id+"/");
+            $('#delete_record_modal').modal('show');
+        });
+
+    });
+
+</script>
+
+{% endblock page_js %}

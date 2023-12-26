@@ -1,0 +1,284 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jyotishi PDF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ... Your existing HTML code ... -->
+
+<!-- Content for printing only -->
+<div class="print-content print-only">
+    <!-- Your middle page data goes here -->
+    <section>
+        <div style='background-color:rgb(255,255,255);margin:40px 0 0;font:12px/16px Arial,sans-serif;'> <!-- Adjust margin-top as needed -->
+            <table style='width: 740px;color: rgb(51,51,51);margin: 0 auto;border-collapse: collapse;'>
+                <!-- ... Your existing table structure ... -->
+                <tbody>
+                    <tr>
+                        <td style='margin-top: 40px; padding:0 20px 20px 20px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                            <!-- ... Your existing content within this td ... -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- ... -->
+</div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        /* Style for the table with the "tb" class */
+		.tb {
+			width: 100%; /* Set the width to 50% */
+			display: inline-block; /* Display the table inline-block */
+			vertical-align: top; /* Align them at the top */
+		} 
+
+        body {
+            background-color: rgb(255, 255, 255);
+            margin: 0;
+            font: 12px/16px Arial, sans-serif;
+        }
+
+        .header, .footer {
+            visibility: hidden;
+            height: 0;
+        }
+    
+
+        .header {
+            margin-top: 80px; /* Adjust the top margin as needed */
+        }
+
+        .footer {
+            margin-top: 20px; /* Adjust the margin-top for the footer as needed */
+        }
+    
+    
+
+        .print-content {
+            width: 740px;
+            color: rgb(51, 51, 51);
+            margin: auto 0;
+            border-collapse: collapse;
+        }
+
+        /* Styles for screen display */
+        @media screen {
+            .header, .footer {
+                display: block; /* Show header and footer for screen display */
+            }
+        }
+
+        /* Styles for printing */
+        @media print {
+            .header, .footer {
+                visibility: hidden;
+                height: 0;
+                
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <!-- Your header content goes here -->
+        <p>This is your header content</p>
+    </div>
+
+    <!-- Content for printing only -->
+    <div class="print-content print-only">
+        <!-- Your middle page data goes here -->
+        <section>
+            <div style='background-color:rgb(255,255,255);margin:0;font:12px/16px Arial,sans-serif;margin-top: 80px!important'>
+                <table style='width: 1000px;color: rgb(51,51,51);margin: 0 auto;border-collapse: collapse;'>
+                    <tbody>
+                        <tr>
+                            <td style='padding:0 20px 20px 20px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                <table style='width:100%;'>
+                                    <tbody>
+                                        <tr>
+                                            <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                                <table style='width:100%;'>
+                                                    <tbody>
+                                                        {%for he in heading%}
+                                                        <tr>
+                                                            <td style='vertical-align:top;font-size:14px;line-height:16px;font-family:Arial,sans-serif;padding:11px 18px 18px 18px;'> 
+                                                                <p style='font-size:13px;color:rgb(0,0,0);margin: 0px;'>
+                                                                <strong><h3>
+                                                                    नाव : {{ he.client_name}}, दिनांक: {{ he.date}}, फोन : </h3></strong>
+                                                                
+                                                                </p>
+                                                           </td>   
+                                                        </tr>
+                                                        {%endfor%}
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td style='padding-left:2px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                                <table style='width:100%;border-collapse:collapse;width: 100%'>
+                                                    <tbody>
+                                                        <!-- <tr>
+                                                            <td colspan='5' style='padding:0 0 16px 0;text-align:left!important;line-height:18px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;'>
+                                                            </td>
+                                                        </tr> -->
+                                                        <tr style='border-bottom:1px solid rgb(204,204,204);padding:2px;'>
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 30px;'>Sr.No
+                                                            </th>
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 70px;'>Product Type
+                                                            </th>
+
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 70px;'>Product Name
+                                                            </th>
+
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 70px;'>Company Name
+                                                            </th>
+                                                            <!-- <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 100px;'>Description
+                                                            </th> -->
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 100px;'>Weight / Units
+                                                            </th>
+                                                            
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 100px;'>Qty
+                                                            </th>
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 100px;'>Sell Amount
+                                                            </th>
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 100px;'>Total Amount
+                                                            </th>
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 100px;'>Return Validity
+                                                            </th>
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 100px;'>Return Percentage
+                                                            </th>
+
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 100px;'>Return Amount
+                                                            </th>
+
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 100px;'>Exchange Validity
+                                                            </th>
+
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 100px;'>Exchange Percentage
+                                                            </th>
+
+                                                            <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 100px;'>Exchange Amount
+                                                            </th>
+                                                        </tr>
+                                                        
+                                                        {%for bl in bill_list%}
+                                                        <tr style="border-bottom:1px solid rgb(204,204,204);margin-top: 10px !important;">
+                                                            
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                {{ forloop.counter }}
+                                                            </td>
+        
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                {{ bl.product_type }}
+                                                            </td>
+
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                {{ bl.product_name }}
+                                                            </td>
+
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                {{ bl.company_name }}
+                                                            </td>
+        
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;vertical-align: middle;'>
+                                                                <span class='product-qty'> 
+                                                                    {{ bl.product_weight }}/ {{ bl.product_units }}
+                                                                </span>
+                                                            </td>
+
+                                                           
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;vertical-align: middle;'>
+                                                                <span class='product-qty'> 
+                                                                    {{ bl.product_quantity }} 
+                                                                </span>
+                                                            </td>
+                                                            
+                                                            <td style='text-align:right!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;vertical-align: middle;'>
+                                                                <span class='product-qty'> 
+                                                                    {{ bl.sell_amount }}
+                                                                </span>
+                                                            </td>
+
+                                                            <td style='text-align:right!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;vertical-align: middle;'>
+                                                                <span class='product-qty'> 
+                                                                    {{ bl.total_amount }}
+                                                                </span>
+                                                            </td>
+
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                {{ bl.ret_validity }}
+                                                            </td>
+
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                {{ bl.ret_percentage }}
+                                                            </td>
+
+                                                            <td style='text-align:right!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                {{ bl.ret_amount }}
+                                                            </td>
+
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                {{ bl.exc_validity }}
+                                                            </td>
+
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                {{ bl.exc_percentage }}
+                                                            </td>
+                                                            
+                                                            <td style='text-align:right!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                {{ bl.exc_amount }}
+                                                            </td>
+
+                                                        </tr>
+                                                        {%endfor%}
+        
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td style='text-align:right!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;vertical-align: middle;' colspan="2"><strong>Total Amount</strong></td>
+                                                            {%for he in heading%}
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;vertical-align: middle;'>{{he.total_bill_amount}}</td>
+                                                            {%endfor%}
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;vertical-align: middle;' colspan="6"></td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <!-- ... -->
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <!-- Your footer content goes here -->
+        <p>This is your footer content</p>
+    </div>
+
+    <!-- Additional styles and HTML structure as needed -->
+</body>
+</html>

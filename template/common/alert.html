@@ -1,0 +1,9 @@
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <strong id="smsg" hidden class="success">{{ message }}</strong>
+        {% else %}
+            <strong id="emsg" hidden class="error">{{ message }}</strong>
+        {% endif %}
+    {% endfor %}
+{% endif %}

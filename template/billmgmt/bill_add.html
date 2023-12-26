@@ -1,0 +1,784 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block meta %}
+    <title>DMS - Dashboard</title>
+{% endblock meta %}
+
+{% block datatable_css %}
+    <link rel="stylesheet" href="{% static 'assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css'%}">
+{% endblock datatable_css %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/libs/select2/css/select2.min.css'%}">
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+
+
+    <style>
+        .form-floating>.form-control, .form-floating>.form-select {
+            height: calc(2.8rem + 1px) !important;
+            padding: 1rem .75rem;
+        }
+        .form-floating>.textuti {
+            height: calc(2.8rem + 30px) !important;
+        }
+        .select2
+        {
+            width: 100% !important;
+        }
+        .amsify-suggestags-list{
+        z-index: 1 !important;
+        width: 100% !important;
+        }
+        textarea,
+        .textarea {
+        min-height: inherit;
+        height: auto;
+        }
+        .form-check
+        {
+            display: inline-block;
+        }
+
+        .dtr-title{
+            font-weight: 600;
+        }
+
+        /** SPINNER CREATION **/
+
+        .loader {
+        position: relative;
+        text-align: center;
+        margin: 15px auto 35px auto;
+        z-index: 9999;
+        display: block;
+        width: 80px;
+        height: 80px;
+        border: 10px solid rgba(0, 0, 0, .3);
+        border-radius: 50%;
+        border-top-color: #000;
+        animation: spin 1s ease-in-out infinite;
+        -webkit-animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+        }
+
+        @-webkit-keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+        }
+    </style>
+{% endblock page_css %}
+
+{% block content %}
+
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <!-- <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0 font-size-18">Generate Customer Bill</h4>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="/billmgmt/bill_view/">Customer Bill List</a></li>
+                            <li class="breadcrumb-item active">Generate Customer Bill</li>
+                        </ol>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+       
+        <div class="row">
+            {% include 'common/alert.html' %}
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-sm-flex flex-wrap">
+                            <h4 class="card-title mb-4">Customer Bill Details</h4>
+                            <div class="ms-auto">
+                                <button type="button" class="btn btn-primary waves-effect btn-sm waves-light mb-2 float-right" data-bs-toggle="modal" data-bs-target="#addProduct" style="" id="add_prod_btn">
+                                <i class="mdi mdi-plus font-size-11"></i>Add Product
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table id="datatable" class="table table-bordered dt-responsive nowrap w-100 table table-striped">
+                            <!-- <table class="table align-middle table-bordered dt-responsive nowrap w-100 table table-striped" >   --> 
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="align-middle">#</th>
+                                        <th class="align-middle">Action</th>
+                                        <th scope="col" style="white-space: normal;">Product Type</th>
+                                        <th scope="col" style="white-space: normal;">Product Name</th>
+                                        <th scope="col" style="white-space: normal;">Company Name</th>
+                                        <th scope="col" style="white-space: normal;">Weight</th>
+                                        <th scope="col" style="white-space: normal;">Units</th>
+                                        <th scope="col" style="white-space: normal;">Quantity</th>
+                                        <th scope="col" style="white-space: normal;">Sell Amount</th>
+                                        <th scope="col" style="white-space: normal;">Total Amount</th>
+                                        <th scope="col" style="white-space: normal;">Ret Val</th>
+                                        <th scope="col" style="white-space: normal;">Ret Per</th>
+                                        <th scope="col" style="white-space: normal;">Ret Amt</th>
+                                        <th scope="col" style="white-space: normal;">Exc Val</th>
+                                        <th scope="col" style="white-space: normal;">Exc Per</th>
+                                        <th scope="col" style="white-space: normal;">Exc Amt</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="product_records">
+                                           
+                                </tbody>
+                                
+                            </table>
+                        </div> 
+                        
+                        <div class="mt-3" id="icountpdf">
+                            <form method="post" action="/billmgmt/generate_bill/{{bill_id}}/" id="generate_bill_form">
+                                {% csrf_token %}
+
+                                <div class="row">                               
+                                    <div class="col-md-2 col-sm-6 col-lg-2">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="items_total" placeholder="Items Total" name="items_total" maxlength="10" readonly value="" required>
+                                            <label for="items_total">Items Total<sup class="text-danger">*</sup></label>
+                                            
+                                        </div>
+                                    </div>
+
+                                    <!-- Code For Date Field -->
+                                    {% load tz %}  
+                                    <!-- Load timezone template tag (for date formatting) -->
+
+                                    {% now "Y-m-d" as tdate %}  
+                                    <!-- Get the current date in the format "Y-m-d" -->
+                                    <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="form-floating mb-3">
+                                            <input type="date" class="form-control" id="date" placeholder="Date" name="date" required max="{{ tdate }}" value="">
+                                            <label for="date">Bill Date<sup class="text-danger">*</sup></label>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="ms-auto">
+                                    <button type="submit" class="btn btn-primary waves-effect btn-sm waves-light mb-2 float-right">
+                                    <i class="mdi mdi-printer font-size-11" style="margin-right: 5px;"></i>Generate Bill
+                                </div>
+                                <div class="" style="float: right;">
+                                    <label class="form-check-label" for="">
+                                        Download Bill - 
+                                    </label>
+                                    <ul>
+                                        <li> <a id="bill_original_copy" href="/billmgmt/generate_bill_pdf/{{bill_id}}/" target="_blank" rel="tooltip" title="DOWNLOAD ORIGINAL COPY FOR CUSTOMER"> ORIGINAL COPY FOR CUSTOMER</a> </li>
+
+                                    </ul>    
+                                </div>
+                                   
+                                <small class="text-danger">If you have added any new Item. Then, Please Click on Generate Bill button before you leave this page.</small>
+                                <!-- <small class="text-info">Please Click on Generate PO button before you leave this page.</small> -->
+                            </form>
+                        </div>    
+
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="text-muted">
+                            
+                            <small>
+                                <strong>Customer Details : </strong> <a href="tel:"></a> , <a href="mailto:"></a>
+                            </small>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<!-- ADD Product -->
+<div id="addProduct" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Add Bill Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="bill_item_form">
+                {% csrf_token %}
+                <div class="modal-body">
+                    
+                    <div class="row">
+                        <input type="hidden" name="edit_id" id="edit_id" value="">
+                        <input type="hidden" name="bill_id" id="bill_id" value="{{bill_id}}">
+                        <!-- Code For Product Type -->
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-group mb-3">
+                                <label for="product_type" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Product Type<sup class="text-danger">*</sup></label>
+                                <select class="form-control select2" id="product_type" required name="product_type">
+                                    <option value="" disabled>Select Product Type</option>
+                                {%for ptl in pro_typ_list%}
+                                    <option value="{{ptl.id}}" data-product_type="{{ptl.product_type}}">{{ptl.product_type}}</option>
+                                {%endfor%}
+                                
+                                </select>
+                                <span class="text-danger error" id="esoerror"></span>
+                            </div>
+                        </div>
+
+                         <!-- Code For Product Name -->
+
+                         <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-group mb-3">
+                                <label for="product_name" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Product Name<sup class="text-danger">*</sup></label>
+                                <select class="form-control select2" id="product_name" required name="product_name">
+                                    <option value="" disabled>Select Product Name</option>
+                                </select>
+                                <span class="text-danger error" id="esoerror"></span>
+                            </div>
+                        </div>
+
+                        <!-- Code For Company Name -->
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-group mb-3">
+                                <label for="company_name" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Company Name<sup class="text-danger">*</sup></label>
+                                <select class="form-control select2" id="company_name" required name="company_name">
+                                    <option value="" disabled>Select Company Name</option>
+                                </select>
+                                <span class="text-danger error" id="esoerror"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="product_weight" placeholder="Enter Section Name" name="product_weight" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                <label for="product_weight">Product Weight<sup class="text-danger">*</sup></label>
+                                <span class="text-danger error" id="serror"></span>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 col-sm-12 col-lg-2">
+                            <div class="form-group mb-3">
+                                <label for="product_units" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Units<sup class="text-danger">*</sup></label>
+                                <select class="form-control select2" id="product_units" required name="product_units">
+                                    <option value="" selected disabled>Select Units</option>
+                                    <option value="NOS.">NOS.</option>
+                                    <option value="KG">KG</option>
+                                    <option value="M">MG</option>
+                                    <option value="G">G</option>
+                                    <option value="BOXES">BOXES</option>
+                                    <option value="MM">MM</option>
+                                </select>
+                                <span class="text-danger error" id="esoerror"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="product_quantity" placeholder="Enter Section Name" name="product_quantity" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                <label for="product_quantity">Product Quantity<sup class="text-danger">*</sup></label>
+                                <span class="text-danger error" id="serror"></span>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="sell_amount" value="0.00" placeholder="Enter Section Name" name="sell_amount" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                <label for="sell_amount">Sell Amount<sup class="text-danger">*</sup></label>
+                                <span class="text-danger error" id="serror"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="total_amount" value="0.00" placeholder="Enter Section Name" name="total_amount" required readonly onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                    <label for="total_amount">Total Amount<sup class="text-danger">*</sup></label>
+                                    <span class="text-danger error" id="serror"></span>
+                                </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="ret_validity" placeholder="Enter Section Name" name="ret_validity" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                <label for="ret_validity">Return Validity<sup class="text-danger">*</sup></label>
+                                <span class="text-danger error" id="serror"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="ret_percentage" placeholder="Enter Section Name" name="ret_percentage" value="0.00" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                <label for="ret_percentage">Return Percentage<sup class="text-danger">*</sup></label>
+                                <span class="text-danger error" id="serror"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="ret_amount" placeholder="Enter Section Name" name="ret_amount" required value="0.00" readonly onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                <label for="ret_amount">Return Amount<sup class="text-danger">*</sup></label>
+                                <span class="text-danger error" id="serror"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="exc_validity" placeholder="Enter Section Name" name="exc_validity" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                <label for="exc_validity">Exchange Validity<sup class="text-danger">*</sup></label>
+                                <span class="text-danger error" id="serror"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="exc_percentage" placeholder="Enter Section Name" name="exc_percentage" value="0.00" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                <label for="exc_percentage">Exchange Percentage<sup class="text-danger">*</sup></label>
+                                <span class="text-danger error" id="serror"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="exc_amount" placeholder="Enter Section Name" name="exc_amount" required readonly onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                <label for="exc_amount">Exchange Amount<sup class="text-danger">*</sup></label>
+                                <span class="text-danger error" id="serror"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary waves-effect waves-light" id="add_prod"><i class="bx font-size-16 align-middle me-2 add_prod"></i>Save</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="delete_prodrecord_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+        <form method="post" action class="form-horizontal">
+            {% csrf_token %}
+          <div class="modal-header">
+              <h5 class="modal-title">Confirm Record Deletion</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <strong>Do you really wants to delete the record..? </strong>
+            <div class="form-group">
+              <div class="col-md-4">
+                <input type="hidden" name="prid" id="prid" class="form-control">
+              </div>
+            </div>
+            <input type="hidden" name="_token" value="">
+          </div>
+          <div class="modal-footer"> 
+            <button type="button" class="btn btn-secondary waves-effect btn-sm" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary text-white btn-sm" id="del_rec"><i class="fe fe-check mr-2"></i>Delete</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+{% include 'common/delete_model.html' %}
+{% endblock content %}  
+
+{% block datatable_js %}
+    
+    <script src="{% static 'assets/libs/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('#datatable').dataTable();     
+        }); 
+    </script>
+{% endblock datatable_js %}
+{% block page_js %}
+
+<script src="{% static 'assets/libs/select2/js/select2.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+<script>
+
+    
+    $(document).ready(function(){
+        var $body = $("body");
+        
+        ///////////////////////////// Select 2 Fields For Drop Down //////////////////////
+        
+
+        $('#product_type,#product_name,#company_name').select2({
+            dropdownParent: $('#addProduct')
+        });
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // get product name from product type wise
+
+        $('#product_type').change(function(e)
+        {
+            var product_type = $(this).val();      // get the question value from the question field 
+            $("#product_name").empty();           // clear the product name
+
+            $.ajax({    
+                url: '/stockmgmt/get_productname/',
+                type :'get',
+                data : {product_type:product_type},
+                async: true,
+                cache: true,
+                dataType: 'json',
+                success: function(response) 
+                {
+                    console.log(response);
+
+                    //get question wise jyotishi salla.
+                    $('#product_name').append("<option value='' class='text-muted' selected disabled>"+'Select'+"</option>");
+                    
+                    $.each(response.product_name_list,function(index,row){
+
+                        //get question wise jyotishi salla.
+                        $('#product_name').append("<option value='"+row.id+"'>"+row.product_name+"</option>");
+                                        
+                    });
+                    
+                    // Set the flag to indicate that category change is completed
+                    categoryChangeCompleted = true;
+                            
+                    // Trigger a custom event to signal that category change is completed
+                    $(document).trigger('categoryChangeCompleted');
+                
+                }
+            });
+            
+        });
+
+        
+        // get company name from product name
+        $('#product_name').change(function(e)
+        {
+            var product_name = $(this).val(); 
+            var product_type= $('#product_type').val();  // get the question value from the question field 
+            //alert(product_type);
+            $("#company_name").empty();           // clear the product name
+
+            $.ajax({    
+                url: '/stockmgmt/get_companyname/',
+                type :'get',
+                data : {product_type:product_type, product_name:product_name},
+                async: true,
+                cache: true,
+                dataType: 'json',
+                success: function(response) 
+                {
+                    console.log(response);
+
+                    //get product type & product name wise company name.
+                    $('#company_name').append("<option value='' class='text-muted' selected disabled>"+'Select'+"</option>");
+                    
+                    $.each(response.company_name_list,function(index,row){
+
+                        //get question wise jyotishi salla.
+                        $('#company_name').append("<option value='"+row.id+"'>"+row.company_name+"</option>");
+                                        
+                    });
+                    
+                    // Set the flag to indicate that category change is completed
+                    categoryChangeCompletedCompany = true;
+                            
+                    // Trigger a custom event to signal that category change is completed
+                    $(document).trigger('categoryChangeCompletedCompany');
+                
+                },
+                complete:function(response){
+                    // For Button Loader
+                    // $("#att_records").prop('disabled', false); 
+                    // $("#jyo_upays").prop('disabled', false);
+                    
+                }
+            });
+            
+        });
+    
+        getBillProduct();
+        function getBillProduct(){
+            var bill_id= $('#bill_id').val();
+            $.ajax({
+                headers:{
+                    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+                },
+                url:'/billmgmt/get_bill_records/',
+                type :'get',
+                data : {bill_id:bill_id},
+                cache: false,
+                dataType: 'json',                 
+                success:function(data){
+                    console.log(data);
+                    
+                    $("#datatable").DataTable().destroy();
+                    content ="";
+                    var i = 0; 
+                    var totalAmount = 0;               
+                    $.each(data.bill_list,function(index,row){
+                        totalAmount += parseFloat(row.total_amount);
+                        content +="<tr>";
+                        content +="<td>"+ ++i  +"</td>";
+            
+                        content +="<td>";
+
+                            content +=" <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Product' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+
+                        content +="</td>";
+
+                        content +="<td>"+row.product_type+"</td>";
+                        content +="<td>"+row.product_name+"</td>";
+                        content +="<td>"+row.company_name+"</td>";
+                        content +="<td>"+row.product_weight+"</td>";
+                        content +="<td>"+row.product_units+"</td>";
+                        content +="<td>"+row.product_quantity+"</td>";
+                        content +="<td>"+row.sell_amount+"</td>";
+                        content +="<td>"+row.total_amount+"</td>";
+                        content +="<td>"+row.ret_validity+"</td>";
+                        content +="<td>"+row.ret_percentage+"</td>";
+                        content +="<td>"+row.ret_amount+"</td>";
+                        content +="<td>"+row.exc_validity+"</td>";
+                        content +="<td>"+row.exc_percentage+"</td>";
+                        content +="<td>"+row.exc_amount+"</td>";
+                        
+                        content += "</tr>";
+                    });
+                    
+                    $("#product_records").html(content); //For append html data
+                    $('#datatable').dataTable();
+
+                    $('#items_total').val(totalAmount);
+                }
+            });
+        }
+
+
+
+        ////////////// Add Producs
+        $(document).on("click",'#add_prod',function()
+        {        
+            var edit_id= $('#edit_id').val();
+            var bill_id= $('#bill_id').val();
+            var product_type= $('#product_type').val();
+            var product_name= $('#product_name').val();
+            var company_name= $('#company_name').val();
+            var product_weight= $('#product_weight').val();
+            var product_units= $('#product_units').val();
+            var product_quantity= $('#product_quantity').val();
+            var sell_amount= $('#sell_amount').val();
+            var total_amount= $('#total_amount').val();
+            var ret_validity= $('#ret_validity').val();
+            var ret_percentage= $('#ret_percentage').val();
+            var ret_amount= $('#ret_amount').val();
+            var exc_validity= $('#exc_validity').val();
+            var exc_percentage= $('#exc_percentage').val();
+            var exc_amount= $('#exc_amount').val();
+            // The Contain on Form Which We Feed, so it will send the data to view Function for Saving purpose.
+            $.ajax({
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                url:'/billmgmt/post_bill_product/',
+                type :'post',
+                data : {edit_id:edit_id,bill_id:bill_id,product_type:product_type,product_name:product_name,company_name:company_name,product_weight:product_weight,product_units:product_units,product_quantity:product_quantity,sell_amount:sell_amount,total_amount:total_amount,ret_validity:ret_validity,ret_percentage:ret_percentage,ret_amount:ret_amount,exc_validity:exc_validity,exc_percentage:exc_percentage,exc_amount:exc_amount},
+                async: false,
+                cache: true,
+                dataType: 'json',
+                success:function(response){
+                    console.log(response);
+
+                    if (response.status==true) {  
+                        $('#bill_item_form')[0].reset()  
+                        
+
+                        $("#product_type").val("").trigger("change"); 
+                        $("#product_name").val("").trigger("change"); 
+                        $("#company_name").val("").trigger("change"); 
+
+                        getBillProduct();
+
+                        // ACTIVE PANE AND LINK
+                        $('#addProduct').modal('hide');
+
+                        //For Notification
+                        toastr.options.timeOut = 5000;
+                        toastr.options.positionClass = 'toast-top-right';
+                        toastr.options.showEasing= 'swing';
+                        toastr.options.hideEasing= 'linear';
+                        toastr.options.showMethod= 'fadeIn';
+                        toastr.options.hideMethod= 'fadeOut';
+                        toastr.options.closeButton= true;
+                        toastr.success(response.message);
+            
+                    }else{
+
+                        //For Notification
+                        toastr.options.timeOut = 5000;
+                        toastr.options.positionClass = 'toast-top-right';
+                        toastr.options.showEasing= 'swing';
+                        toastr.options.hideEasing= 'linear';
+                        toastr.options.showMethod= 'fadeIn';
+                        toastr.options.hideMethod= 'fadeOut';
+                        toastr.options.closeButton= true;
+                        toastr.error(response.message);
+                    }
+                }
+            });
+    
+        }); 
+        
+
+        /////// code for calculating total cost
+
+        function cal_total_amt(){
+
+            //var pr_qty = $('#product').find('option:selected').data('qty');
+            var product_quantity = parseInt($('#product_quantity').val());
+            var sell_amount = parseFloat($('#sell_amount').val()).toFixed(2);
+    
+            
+            var total_cost = parseFloat(product_quantity * sell_amount).toFixed(2); // discount formula
+
+                $('#total_amount').val(total_cost);    
+            
+        }
+    
+        //on change field
+        $('#product_quantity,#sell_amount').blur(function(e)
+        {   
+    
+            cal_total_amt();
+        });
+
+
+        /////// code for calculating return amount
+
+        function cal_ret_amt(){
+
+            //var pr_qty = $('#product').find('option:selected').data('qty');
+            var total_amount = parseFloat($('#total_amount').val()).toFixed(2);
+            var ret_percentage = parseFloat($('#ret_percentage').val()).toFixed(2);
+    
+            var total_ret_amt = parseFloat(total_amount * (ret_percentage / 100).toFixed(2)); // discount formula
+
+                $('#ret_amount').val(total_ret_amt);    
+            
+        }
+    
+        //on change field
+        $('#total_amount,#ret_percentage').blur(function(e)
+        {   
+    
+            cal_ret_amt();
+        });
+
+        /////// code for calculating exchange amount
+
+        function cal_exc_amt(){
+
+            //var pr_qty = $('#product').find('option:selected').data('qty');
+            var total_amount = parseFloat($('#total_amount').val()).toFixed(2);
+            var exc_percentage = parseFloat($('#exc_percentage').val()).toFixed(2);
+    
+            var total_exc_amt = parseFloat(total_amount * (exc_percentage / 100).toFixed(2)); // discount formula
+
+                $('#exc_amount').val(total_exc_amt);    
+            
+        }
+    
+        //on change field
+        $('#total_amount,#exc_percentage').blur(function(e)
+        {   
+            cal_exc_amt();
+        });
+
+        // On Delete Button Delete Client Information
+        $(document).on("click",'.delI',function()
+        {
+            var id = $(this).data('id');
+            $('#prid').val(id);
+            //$('#delete_record_modal form').attr("action","/billmgmt/bill_product_delete/"+id+"/");
+            $('#delete_prodrecord_modal').modal('show');
+        });
+
+        $(document).on("click",'#del_rec',function()
+        {        
+            var prid= $('#prid').val();
+           
+            // The Contain on Form Which We Feed, so it will send the data to view Function for Saving purpose.
+            $.ajax({
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                url:'/billmgmt/bill_product_delete/',
+                type :'post',
+                data : {prid:prid},
+                async: false,
+                cache: true,
+                dataType: 'json',
+                success:function(response){
+                    console.log(response);
+
+                    if (response.status==true) {  
+                        
+                        $("#id").val('');
+                       
+                        getBillProduct();
+                        // ACTIVE PANE AND LINK
+                        $('#delete_prodrecord_modal\
+                        ').modal('hide');
+
+                        //For Notification
+                        toastr.options.timeOut = 5000;
+                        toastr.options.positionClass = 'toast-top-right';
+                        toastr.options.showEasing= 'swing';
+                        toastr.options.hideEasing= 'linear';
+                        toastr.options.showMethod= 'fadeIn';
+                        toastr.options.hideMethod= 'fadeOut';
+                        toastr.options.closeButton= true;
+                        toastr.success(response.message);
+            
+                    }else{
+
+                        //For Notification
+                        toastr.options.timeOut = 5000;
+                        toastr.options.positionClass = 'toast-top-right';
+                        toastr.options.showEasing= 'swing';
+                        toastr.options.hideEasing= 'linear';
+                        toastr.options.showMethod= 'fadeIn';
+                        toastr.options.hideMethod= 'fadeOut';
+                        toastr.options.closeButton= true;
+                        toastr.error(response.message);
+                    }
+                }
+            });
+    
+        }); 
+        
+    });
+
+
+</script>
+
+{% endblock page_js %}

@@ -1,0 +1,401 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Bill PDF</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        /* Style for the table with the "tb" class */
+		.tb {
+			width: 49%; /* Set the width to 50% */
+			display: inline-block; /* Display the table inline-block */
+			vertical-align: top; /* Align them at the top */
+		} 
+    </style>
+</head>
+<body>
+    <section>
+        <div class="tb">
+            <table class="table">
+                 <tbody>
+                     <tr>
+                         <td style='padding:0 20px 20px 20px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                             <table style='width:100%;border-collapse:collapse;border:solid black;border-width: thin;'>
+                                 <tbody>
+                                     <tr>
+                                        <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                             <table style='width:100%;border-collapse:collapse'>
+                                                 <tbody style='background-color: #f5f5f5;'>
+                                                     <tr>
+                                                         <td  style='width:115px;padding:10px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                                            <!-- <img src="{% static 'assets/files/company/shreedevta.jpg' %}" class="header-brand-img desktop-logo" alt="Jyotishi logo" width="150" height="50"> -->
+                                                        </td>
+                                                         <!-- <td style='text-align:right;padding:0px 0;white-space:nowrap;vertical-align:top;font-size:0px;line-height:0px;font-family:Arial,sans-serif;margin:unset'>
+                                                         </td> -->
+                                                    <!-- </tr>
+                                                     <tr> -->
+                                                         <td colspan='3' style='text-align:right;padding:7px 7px 0 0;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'> 
+                                                            <h2 style='font-size:16px;line-height:24px;margin:0;padding:0;font-weight:600;color:rgb(0,0,0)!important;'> दर्शन चोथे (बी.ई कॉम्प्युटर)
+                                                            </h2>
+
+                                                            <h5 style='font-size:11px;line-height:18px;margin:0;padding:0;font-weight:normal;color:rgb(0,0,0)!important'>ज्योतिषी विशारद | ज्योतिषाचार्य | कृष्णमूर्ती नक्षत्र भूषण | वास्तु विशारद | अंकशास्त्र | महावास्तु तज्ञ | जिओपॅथिक तणाव सल्लागार | खगोल वास्तु सल्लागार</h5>   
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan='4' style='text-align:right;padding:0 0 5px 0;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'> 
+                                                       </td>
+                                                   </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                 
+                                    <tr>
+                                        <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                            <table style='width:100%;border-collapse:collapse'>
+                                                <tbody style="border-top: #f5f5f5">
+                                                    <tr>
+                                                        <td colspan="2" style='font-size:15px;text-align: center;line-height: 30px;'>
+                                                            <b><u>CUSTOMER BILL</u></b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;padding: 0px 10px 0px 10px;'> 
+                                                            <small style='font-size:13px;color:rgb(0,0,0);margin: 0px;'> </small>
+                                                            
+                                                       </td>
+                                                       <td>
+                                                           <small style='font-size:13px;color:rgb(0,0,0);margin: 0px;float: right;padding-right: 10px;'>Date:{%for bl in heading%}
+                                                            {{bl.date}}
+                                                            
+                                                            
+                                                        {%endfor%} </small>
+                                                       </td>
+                                                   </tr>
+                                                    <tr>
+                                                        <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'></td>
+                                                   </tr>
+                                               </tbody>
+                                           </table>
+                                       </td>
+                                    </tr>
+                                   
+                                    <tr>
+                                        <td style='padding:0 0 0 10px !important;border-bottom:1px solid gray;border-top:1px solid gray;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'> 
+                                            <p style='font:12px/16px Arial,sans-serif;'> 
+                                                <strong style='color:black;'>CUSTOMER DETAILS :</strong>
+                                                <br>
+                                                {%for bl in heading%}
+                                                    <strong>{{bl.client_name}}</strong>
+                                                    <br>
+                                                    
+                                                {%endfor%}
+                                                
+                                            </p>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'></td>
+                                    </tr>
+                                    <tr>
+                                        <td style='padding-left:2px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                            <table style='width:95%;border-collapse:collapse;width: 100%'>
+                                                <tbody>
+                                                    <!-- <tr>
+                                                        <td colspan='5' style='padding:0 0 16px 0;text-align:left!important;line-height:18px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;'>
+                                                        </td>
+                                                    </tr> -->
+                                                    <tr style='border-bottom:1px solid rgb(204,204,204);padding:2px;'>
+                                                        <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 30px;'>Sr.No
+                                                        </th>
+                                                        <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 70px;'>Product Name
+                                                        </th>
+                                                        <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 70px;'>Description
+                                                        </th>
+                                                        <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 20px;'>Qty
+                                                        </th>
+                                                        <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 20px;'>Amount
+                                                        </th>
+                                                    </tr>
+                                                    
+                                                    {%for bl in bill_list%}
+                                                        <tr style="border-bottom:1px solid rgb(204,204,204);margin-top: 10px !important;">
+                                                            
+                                                            <td style='text-align:center!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                {{bl.product_name}}
+                                                            </td>
+        
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                                
+                                                            </td>
+        
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;vertical-align: middle;'>
+                                                                
+                                                            </td>
+        
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;vertical-align: middle;'>
+                                                                <span class='product-qty'> 
+                                                                    
+                                                                </span>
+                                                            </td>
+                                                            
+                                                            <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;vertical-align: middle;'>
+                                                                <span class='product-qty'> 
+                                                                    
+                                                                </span>
+                                                            </td>
+                                                            
+                                                        </tr>
+                                                    
+                                                    {%endfor%}
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td style='text-align:right!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;vertical-align: middle;' colspan="2"><strong>Total Amount</strong></td>
+                                                        <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;vertical-align: middle;'></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border-right: 1px solid;border-top: 2px solid black;border-width: thin;">
+                                            <table style='width:100%;border-collapse:collapse'>
+                                                <tbody>
+                                                    <tr>
+                                                        <td style='border-right: 1px solid;font-size:11px;vertical-align:top;line-height:15px;font-family:Arial,sans-serif;padding:0 0 0 10px;'>
+                                                            <p style="margin-top: 5px !important;" > 
+                                                                <strong style='color:black;'> </strong>
+    
+                                                                <br>
+                                                                
+                                                                <br>
+                                                                
+                                                                <br>
+                                                                
+                                                            </p>
+                                                        </td>
+    
+   
+                                                      
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style='background-color:#f5f5f5;padding:0;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;border-top: 2px solid black;border-width: thin;'>
+                                            
+                                            <div style='color:black;text-align:center;font-size:12px;height:20px;margin-top: 7px;'>
+                                                <p style='font-size:11px;color:rgb(0,0,0);line-height:12px;margin:0 0 0 10px;font:11px'>This is an electronically generated bill for customer</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+            
+        <div class="tb">
+            <table class="table">
+                 <tbody>
+                     <tr>
+                         <td style='padding:0 20px 20px 20px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                             <table style='width:100%;border-collapse:collapse;border:solid black;border-width: thin;'>
+                                 <tbody>
+                                     <tr>
+                                        <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                             <table style='width:100%;border-collapse:collapse'>
+                                                 <tbody style='background-color: #f5f5f5;'>
+                                                     <tr>
+                                                         <td  style='width:115px;padding:10px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                                            <!-- <img src="{% static 'assets/files/company/shreedevta.jpg' %}" class="header-brand-img desktop-logo" alt="Jyotishi logo" width="150" height="50"> -->
+                                                        </td>
+                                                         <!-- <td style='text-align:right;padding:0px 0;white-space:nowrap;vertical-align:top;font-size:0px;line-height:0px;font-family:Arial,sans-serif;margin:unset'>
+                                                         </td> -->
+                                                    <!-- </tr>
+                                                     <tr> -->
+                                                         <td colspan='3' style='text-align:right;padding:7px 7px 0 0;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'> 
+                                                            <h2 style='font-size:16px;line-height:24px;margin:0;padding:0;font-weight:600;color:rgb(0,0,0)!important;'> दर्शन चोथे (बी.ई कॉम्प्युटर)
+                                                            </h2>
+
+                                                            <h5 style='font-size:11px;line-height:18px;margin:0;padding:0;font-weight:normal;color:rgb(0,0,0)!important'>ज्योतिषी विशारद | ज्योतिषाचार्य | कृष्णमूर्ती नक्षत्र भूषण | वास्तु विशारद | अंकशास्त्र | महावास्तु तज्ञ | जिओपॅथिक तणाव सल्लागार | खगोल वास्तु सल्लागार</h5>   
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+	 												
+                                                        <td colspan='4' style='text-align:right;padding:0 0 5px 0;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'> 
+                                                            
+                                                            
+                                                           
+                                                       </td>
+                                                   </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                 
+                                    <tr>
+                                        <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                            <table style='width:100%;border-collapse:collapse'>
+                                                <tbody style="border-top: #f5f5f5">
+                                                    <tr>
+                                                        <td colspan="2" style='font-size:15px;text-align: center;line-height: 30px;'>
+                                                            <b><u>CUSTOMER BILL</u></b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;padding: 0px 10px 0px 10px;'> 
+                                                            <small style='font-size:13px;color:rgb(0,0,0);margin: 0px;'> </small>
+                                                            
+                                                       </td>
+                                                       <td>
+                                                           <small style='font-size:13px;color:rgb(0,0,0);margin: 0px;float: right;padding-right: 10px;'>Date: </small>
+                                                       </td>
+                                                   </tr>
+                                                    <tr>
+                                                        <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'></td>
+                                                   </tr>
+                                               </tbody>
+                                           </table>
+                                       </td>
+                                    </tr>
+                                   
+                                    <tr>
+                                        <td style='padding:0 0 0 10px !important;border-bottom:1px solid gray;border-top:1px solid gray;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'> 
+                                            <p style='font:12px/16px Arial,sans-serif;'> 
+                                                <strong style='color:black;'>CUSTOMER DETAILS :</strong>
+                                                <br>
+                                                {%for bl in heading%}
+                                                    <strong>{{bl.client_name}}</strong>
+                                                    <br>
+                                                    
+                                                    
+                                                    <br>
+                                                    
+                                                    <br>
+                                                {%endfor%}
+                                                
+                                            </p>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'></td>
+                                    </tr>
+                                    <tr>
+                                        <td style='padding-left:2px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;'>
+                                            <table style='width:95%;border-collapse:collapse;width: 100%'>
+                                                <tbody>
+                                                    <!-- <tr>
+                                                        <td colspan='5' style='padding:0 0 16px 0;text-align:left!important;line-height:18px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;'>
+                                                        </td>
+                                                    </tr> -->
+                                                    <tr style='border-bottom:1px solid rgb(204,204,204);padding:2px;'>
+                                                        <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 30px;'>Sr.No
+                                                        </th>
+                                                        <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 70px;'>Product Name
+                                                        </th>
+                                                        <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 70px;'>Description
+                                                        </th>
+                                                        <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 20px;'>Qty
+                                                        </th>
+                                                        <th style='text-align:left!important;line-height:18px;padding:6px 0 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;width: 20px;'>Amount
+                                                        </th>
+                                                    </tr>
+                                                    
+                                                    
+                                                        <tr style="border-bottom:1px solid rgb(204,204,204);margin-top: 10px !important;">
+                                                        
+                                                        <td style='text-align:center!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                            
+                                                        </td>
+    
+                                                        <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;'>
+                                                            
+                                                        </td>
+    
+                                                        <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;vertical-align: middle;'>
+                                                            
+                                                        </td>
+    
+                                                        <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;vertical-align: middle;'>
+                                                            <span class='product-qty'> 
+                                                                
+                                                            </span>
+                                                        </td>
+                                                        
+                                                        <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:11px;font-family:Arial,sans-serif;vertical-align: middle;'>
+                                                            <span class='product-qty'> 
+                                                                
+                                                            </span>
+                                                        </td>
+                                                        
+                                                    </tr>
+                                                    
+    
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td style='text-align:right!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;vertical-align: middle;' colspan="2"><strong>Total Amount</strong></td>
+                                                        <td style='text-align:left!important;line-height:18px;padding:0 10px 5px 10px;vertical-align:top;font-size:12px;font-family:Arial,sans-serif;vertical-align: middle;'></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border-right: 1px solid;border-top: 2px solid black;border-width: thin;">
+                                            <table style='width:100%;border-collapse:collapse'>
+                                                <tbody>
+                                                    <tr>
+                                                        <td style='border-right: 1px solid;font-size:11px;vertical-align:top;line-height:15px;font-family:Arial,sans-serif;padding:0 0 0 10px;'>
+                                                            <p style="margin-top: 5px !important;" > 
+                                                                <strong style='color:black;'> </strong>
+    
+                                                                <br>
+                                                                
+                                                                <br>
+                                                                
+                                                                <br>
+                                                                
+                                                            </p>
+                                                        </td>
+    
+   
+                                                      
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style='background-color:#f5f5f5;padding:0;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif;border-top: 2px solid black;border-width: thin;'>
+                                            
+                                            <div style='color:black;text-align:center;font-size:12px;height:20px;margin-top: 7px;'>
+                                                <p style='font-size:11px;color:rgb(0,0,0);line-height:12px;margin:0 0 0 10px;font:11px'>This is an electronically generated bill for customer</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,1266 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block meta %}
+    <title>DMS - Dashboard</title>
+{% endblock meta %}
+
+{% block datatable_css %}
+    <link rel="stylesheet" href="{% static 'assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css'%}">
+{% endblock datatable_css %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/libs/select2/css/select2.min.css'%}">
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+
+
+    <style>
+        .form-floating>.form-control, .form-floating>.form-select {
+            height: calc(2.8rem + 1px) !important;
+            padding: 1rem .75rem;
+        }
+        .form-floating>.textuti {
+            height: calc(2.8rem + 30px) !important;
+        }
+        .select2
+        {
+            width: 100% !important;
+        }
+        .amsify-suggestags-list{
+        z-index: 1 !important;
+        width: 100% !important;
+        }
+        textarea,
+        .textarea {
+        min-height: inherit;
+        height: auto;
+        }
+        .form-check
+        {
+            display: inline-block;
+        }
+
+        .dtr-title{
+            font-weight: 600;
+        }
+
+        /** SPINNER CREATION **/
+
+        .loader {
+        position: relative;
+        text-align: center;
+        margin: 15px auto 35px auto;
+        z-index: 9999;
+        display: block;
+        width: 80px;
+        height: 80px;
+        border: 10px solid rgba(0, 0, 0, .3);
+        border-radius: 50%;
+        border-top-color: #000;
+        animation: spin 1s ease-in-out infinite;
+        -webkit-animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+        }
+
+        @-webkit-keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+        }
+    </style>
+{% endblock page_css %}
+
+{% block content %}
+
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item active">Vastu Management</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-sm-flex flex-wrap">     
+                           <h4 class="card-title mb-4">Vastu Management</h4>
+                           <div class="ms-auto">
+                            </div>
+                        </div>
+
+                        {% include 'common/alert.html' %}
+                        
+                        <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#vastu_mgmt_list" role="tab">
+                                    <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                    <span class="d-none d-sm-block">Vastu Management</span> 
+                                </a>
+                            </li>
+                           
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#update_vastu_mgmt" role="tab">
+                                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                        <span class="d-none d-sm-block">ADD / Update Vastu Management</span> 
+                                    </a>
+                                </li>
+                        </ul>
+                        <div class="tab-content p-3 text-muted">
+                            <div class="tab-pane active" id="vastu_mgmt_list" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="datatable"> 
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" style="width: 20px;">Sr.No</th>
+                                                <th scope="col" style="width: 20px;">Action</th>
+                                                <th scope="col" style="white-space: normal;">Client Name</th>
+                                                <th scope="col" style="white-space: normal;">Date</th>
+                                                <th scope="col" style="white-space: normal;">Vastu</th>
+                                                <th scope="col" style="white-space: normal;">Disha</th>
+                                                <th scope="col" style="white-space: normal;">Parinam</th>
+                                                <th scope="col" style="white-space: normal;">Badal Disha</th>
+                                                <th scope="col" style="white-space: normal;">Badal Shakya Naslyas Upay</th>
+                                                <th scope="col" style="white-space: normal;">Etar Upay</th>
+                                                <th scope="col" style="white-space: normal;">Vishes Upay</th>
+                                                <th scope="col" style="white-space: normal;">2D 3D Upay</th>
+                                                <th scope="col" style="white-space: normal;">Extra Upay</th>
+                                                <th scope="col" style="white-space: normal;">Vishes Salla</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="vastu_mgmt_records">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+         
+                            <div class="tab-pane" id="update_vastu_mgmt" role="tabpanel">
+                                
+                                <form class="row" id="vastu_mgmt_form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="edit_id" id="edit_id" value="">
+
+                                    <div class="row">
+
+                                         <!-- Code For Client List -->
+
+                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                            <div class="form-group mb-3">
+                                                <label for="client_name" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Client Name<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="client_name" required name="client_name">
+                                                    <option value="" disabled>Select Client Name</option>
+                                                {%for cl in client_list%}
+                                                    <option value="{{cl.id}}">{{cl.client_name}}</option>
+                                                {%endfor%}
+                                                
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                         <!-- Code For Date Field -->
+
+                                        {% load tz %}  
+                                        <!-- Load timezone template tag (for date formatting) -->
+
+                                        {% now "Y-m-d" as tdate %}  
+                                        <!-- Get the current date in the format "Y-m-d" -->
+                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                            <div class="form-floating mb-3">
+                                                <input type="date" class="form-control" id="date" placeholder="Date" name="date" required max="{{ tdate }}" value="">
+                                                <label for="date">Date<sup class="text-danger">*</sup></label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Code For Vastu-->
+
+                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                            <div class="form-group mb-3">
+                                                <label for="vastu" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Vastu<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="vastu" required name="vastu">
+                                                    <option value="" disabled>Select Vastu</option>
+                                                {%for vl in vastu_list%}
+                                                    <option value="{{vl.id}}" data-vastu="{{vl.vastu}}">{{vl.vastu}}</option>
+                                                {%endfor%}
+                                                
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                         <!-- Code For Disha -->
+
+                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                            <div class="form-group mb-3">
+                                                <label for="disha" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Disha<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="disha" required name="disha">
+                                                    <option value="" disabled>Select Disha</option>
+                                                {%for dl in disha_list%}
+                                                    <option value="{{dl.id}}" data-disha="{{dl.disha}}">{{dl.disha}}</option>
+                                                {%endfor%}
+                                                
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                         <!-- Code For Parinam-->
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <label for="parinam" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Parinam<sup class="text-danger">*</sup></label>
+                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="parinam" name="parinam[]" placeholder="Parinam">
+                    
+                                                </select>
+                                                <span class="text-danger error" id="parinam_error"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">Parinam</label>  
+                                                <textarea  id="parinam_summernote" name="parinam_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                        <!-- Code For Badal Disha -->
+
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-group mb-3">
+                                                <label for="badal_disha" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Badal Disha<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="badal_disha" required name="badal_disha">
+                                                    <option value="" disabled>Select Badal Disha</option>
+                                                {%for bdl in badal_disha_list%}
+                                                    <option value="{{bdl.id}}" data-badal_disha="{{bdl.badal_disha}}">{{bdl.badal_disha}}</option>
+                                                {%endfor%}
+                                                
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Code For Badal Shakya Naslyas Upay -->
+
+                                        <div class="col-md-4 col-sm-12 col-lg-4">
+                                            <div class="form-group mb-3">
+                                                <label for="bsn_upay" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Badal Shakya Naslyas Upay<sup class="text-danger">*</sup></label>
+                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="bsn_upay" name="bsn_upay[]" placeholder="Badal Shakya Naslyas Upay">
+                                                    {%for bsnl in bsnUpay_list%}
+                                                        <option value="{{bsnl.id}}" data-bsn_upay="{{bsnl.bsn_upay}}">{{bsnl.bsn_upay | safe}}</option>
+                                                    {%endfor%}
+                                                </select>
+                                                <span class="text-danger error" id="bsnu_error"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">Badal Shakya Naslyas Upay</label>  
+                                                <textarea  id="bsn_summernote" name="bsn_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                        <!-- Code For Etar Upay-->
+                                    
+                                        <div class="col-md-6 col-sm-12 col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <label for="etar_upay" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Etar Upay<sup class="text-danger">*</sup></label>
+                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="etar_upay" name="etar_upay[]" placeholder="Etar Upay">
+                                                    {%for eul in etar_upay_list%}
+                                                        <option value="{{eul.id}}" data-etar_upay="{{eul.etar_upay}}">{{eul.etar_upay | safe}}</option>
+                                                    {%endfor%}
+                                                </select>
+                                                <span class="text-danger error" id="etar_upay_error"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">Etar Upay</label>  
+                                                <textarea  id="etar_upay_summernote" name="etar_upay_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                        <!-- Code For Vishes Upay -->
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <label for="vis_upay" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Vishes Upay<sup class="text-danger">*</sup></label>
+                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="vis_upay" name="vis_upay[]" placeholder="Vishes Upay">
+                                                    {%for vul in vis_upay_list%}
+                                                        <option value="{{vul.id}}" data-vis_upay="{{vul.vis_upay}}">{{vul.vis_upay | safe}}</option>
+                                                    {%endfor%}
+                                                </select>
+                                                <span class="text-danger error" id="vis_upay_error"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">Vishes Upay</label>  
+                                                <textarea  id="vis_upay_summernote" name="vis_upay_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                        <!-- Code For 2D 3D Upay -->
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <label for="twod_threed_upay" class="form-label" style="font-size: 11px;margin-bottom: 2px;">2D 3D Upay<sup class="text-danger">*</sup></label>
+                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="twod_threed_upay" name="twod_threed_upay[]" placeholder="2D 3D Upay">
+                                                    {%for ttul in twoD_threeD_Upay_List%}
+                                                        <option value="{{ttul.id}}" data-twod_threed_upay="{{ttul.twod_threed_upay}}">{{ttul.twod_threed_upay | safe}}</option>
+                                                    {%endfor%}
+                                                </select>
+                                                <span class="text-danger error" id="twod_threed_upay_error"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">2D 3D Upay</label>  
+                                                <textarea  id="twoD_3D_upay_summernote" name="twoD_3D_upay_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                        <!-- Code For Extra Upay -->
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <label for="ext_upay" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Extra Upay<sup class="text-danger">*</sup></label>
+                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="ext_upay" name="ext_upay[]" placeholder="Extra Upay">
+                                                    {%for eul in ext_upay_list%}
+                                                        <option value="{{eul.id}}" data-ext_upay="{{eul.ext_upay}}">{{eul.ext_upay | safe}}</option>
+                                                    {%endfor%}
+                                                </select>
+                                                <span class="text-danger error" id="ext_upay_error"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">Extra Upay</label>  
+                                                <textarea  id="ext_upay_summernote" name="ext_upay_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                        <!-- Code For Vishes Salla -->
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6">
+                                            <div class="form-group mb-3">
+                                                <label for="vis_salla" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Vishes Salla<sup class="text-danger">*</sup></label>
+                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="vis_salla" name="vis_salla[]" placeholder="Vishes Salla">
+                                                    {%for vsl in vis_salla_list%}
+                                                        <option value="{{vsl.id}}" data-vis_salla="{{vsl.vis_salla}}">{{vsl.vis_salla | safe}}</option>
+                                                    {%endfor%}
+                                                </select>
+                                                <span class="text-danger error" id="vis_salla_error"></span>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-6 col-sm-12 col-lg-6"> 
+                                            <div class="form-group mb-3">
+                                                <label for="emp_remark">Vishes Salla</label>  
+                                                <textarea  id="vis_salla_summernote" name="vis_salla_summernote"></textarea>
+                                                <span class="text-danger error" id="serror"></span>
+                                            
+                                            </div>
+                                        </div>
+
+                                    
+                                        <div class="d-sm-flex flex-wrap">
+                                            <div class="ms-auto">
+                                                <button type="button" class="btn btn-primary waves-effect waves-light" id="add_vastu_record"><i class="bx font-size-16 align-middle me-2"></i>Save</button>
+                                            </div>
+                                        </div>
+                                    </div>   
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+{% include 'common/delete_model.html' %}
+{% endblock content %}  
+
+{% block datatable_js %}
+    
+    <script src="{% static 'assets/libs/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('#datatable').dataTable();     
+        }); 
+    </script>
+{% endblock datatable_js %}
+{% block page_js %}
+
+<script src="{% static 'assets/libs/select2/js/select2.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+<script>
+
+    
+    $(document).ready(function(){
+        var $body = $("body");
+        
+        ///////////////////////////// Select 2 Fields For Drop Down //////////////////////
+
+        $('#client_name').select2(); 
+        $('#vastu').select2(); 
+        $('#disha').select2(); 
+        $('#parinam').select2(); 
+        $('#badal_disha').select2(); 
+        $('#bsn_upay').select2(); 
+        $('#etar_upay').select2(); 
+        $('#vis_upay').select2(); 
+        $('#twod_threed_upay').select2(); 
+        $('#ext_upay').select2(); 
+        $('#vis_salla').select2(); 
+
+    });
+
+    ///////////////////////////////////////////////////////////////////////////////////
+
+   
+    //////////////////////// For set/unset select field //////////////////////////////
+
+
+    $('.nav-tabs a[href="#update_vastu_mgmt"]').click(function()
+    {
+        //flush the data
+        $("#client_name").val("").trigger("change");
+        $("#date").val("").trigger("change");
+        $("#vastu").val("").trigger("change"); 
+        $("#disha").val("").trigger("change"); 
+        $("#parinam").val("").trigger("change");
+        $("#badal_disha").val("").trigger("change"); 
+        $("#bsn_upay").val("").trigger("change"); 
+        $("#etar_upay").val("").trigger("change"); 
+        $("#vis_upay").val("").trigger("change"); 
+        $("#twod_threed_upay").val("").trigger("change"); 
+        $("#ext_upay").val("").trigger("change"); 
+        $("#vis_salla").val("").trigger("change"); 
+
+
+        $('#parinam_summernote').summernote('code', ""); 
+        $('#etar_upay_summernote').summernote('code', ""); 
+        $('#bsn_summernote').summernote('code', "");
+        $('#vis_upay_summernote').summernote('code', ""); 
+        $('#twoD_3D_upay_summernote').summernote('code', "");
+        $('#ext_upay_summernote').summernote('code', "");
+        $('#vis_salla_summernote').summernote('code', "");
+
+    });
+
+    ////////////////////////////codes for add Summernote //////////////////////////
+
+    $('#parinam_summernote').summernote({
+        placeholder: '',
+        tabsize: 2,
+        height: 50,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'underline', 'clear']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['table', ['table']],
+          ['insert', ['link', 'picture', 'video']],
+          ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+    });
+
+    $('#etar_upay_summernote').summernote({
+        placeholder: '',
+        tabsize: 2,
+        height: 50,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'underline', 'clear']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['table', ['table']],
+          ['insert', ['link', 'picture', 'video']],
+          ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+    });
+
+    $('#bsn_summernote').summernote({
+        placeholder: '',
+        tabsize: 2,
+        height: 50,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'underline', 'clear']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['table', ['table']],
+          ['insert', ['link', 'picture', 'video']],
+          ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+    });
+
+    $('#vis_upay_summernote').summernote({
+        placeholder: '',
+        tabsize: 2,
+        height: 50,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'underline', 'clear']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['table', ['table']],
+          ['insert', ['link', 'picture', 'video']],
+          ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+    });
+
+    $('#twoD_3D_upay_summernote').summernote({
+        placeholder: '',
+        tabsize: 2,
+        height: 50,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'underline', 'clear']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['table', ['table']],
+          ['insert', ['link', 'picture', 'video']],
+          ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+    });
+
+    $('#ext_upay_summernote',).summernote({
+        placeholder: '',
+        tabsize: 2,
+        height: 50,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'underline', 'clear']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['table', ['table']],
+          ['insert', ['link', 'picture', 'video']],
+          ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+    });
+
+    $('#vis_salla_summernote',).summernote({
+        placeholder: '',
+        tabsize: 2,
+        height: 50,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'underline', 'clear']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['table', ['table']],
+          ['insert', ['link', 'picture', 'video']],
+          ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+    });
+
+
+    /////////////////////// Codes For Set Data on Summernote /////////////////
+
+    // on change (While Selecting Question he want to change that question, so this code will provide or set that question on that summer note)
+
+     
+    $('#parinam').change(function(e)
+    {
+        // Get the selected option
+        var parinam = $(this).find("option:selected");
+
+        // Collect the values of the selected options
+        var parinam_values = [];
+        parinam.each(function () {
+            parinam_values.push($(this).data("parinam"));
+        });
+
+        // Generate HTML content based on the selected values
+        var content = '';
+        if (parinam_values.length > 0) {
+            parinam_values.forEach(function (data) {
+                content += '<p>' + data + '</p>';
+            });
+        }
+
+        // Set the Summernote content
+        $('#parinam_summernote').summernote('code', content);
+        
+    });
+
+    $('#bsn_upay').change(function(e)
+    {
+        // Get the selected option
+        var bsn_upay = $(this).find("option:selected");
+
+        // Collect the values of the selected options
+        var bsn_upay_value = [];
+        bsn_upay.each(function () {
+            bsn_upay_value.push($(this).data("bsn_upay"));
+        });
+
+        // Generate HTML content based on the selected values
+        var content = '';
+        if (bsn_upay_value.length > 0) {
+            bsn_upay_value.forEach(function (data) {
+                content += '<p>' + data + '</p>';
+            });
+        }
+
+        // Set the Summernote content
+        $('#bsn_summernote').summernote('code', content);
+        
+    });
+
+    $('#etar_upay').change(function(e)
+    {
+        // Get the selected option
+        var etar_upay = $(this).find("option:selected");
+
+        // Collect the values of the selected options
+        var etar_upay_value = [];
+        etar_upay.each(function () {
+            etar_upay_value.push($(this).data("etar_upay"));
+        });
+
+        // Generate HTML content based on the selected values
+        var content = '';
+        if (etar_upay_value.length > 0) {
+            etar_upay_value.forEach(function (data) {
+                content += '<p>' + data + '</p>';
+            });
+        }
+
+        // Set the Summernote content
+        $('#etar_upay_summernote').summernote('code', content);
+        
+    });
+
+    $('#vis_upay').change(function(e)
+    {
+        // Get the selected option
+        var vis_upay = $(this).find("option:selected");
+
+        // Collect the values of the selected options
+        var vis_upay_value = [];
+        vis_upay.each(function () {
+            vis_upay_value.push($(this).data("vis_upay"));
+        });
+
+        // Generate HTML content based on the selected values
+        var content = '';
+        if (vis_upay_value.length > 0) {
+            vis_upay_value.forEach(function (data) {
+                content += '<p>' + data + '</p>';
+            });
+        }
+
+        // Set the Summernote content
+        $('#vis_upay_summernote').summernote('code', content);
+        
+    });
+
+    $('#twod_threed_upay').change(function(e)
+    {
+        // Get the selected option
+        var twod_threed_upay = $(this).find("option:selected");
+
+        // Collect the values of the selected options
+        var twod_threed_upay_value = [];
+        twod_threed_upay.each(function () {
+            twod_threed_upay_value.push($(this).data("twod_threed_upay"));
+        });
+
+        // Generate HTML content based on the selected values
+        var content = '';
+        if (twod_threed_upay_value.length > 0) {
+            twod_threed_upay_value.forEach(function (data) {
+                content += '<p>' + data + '</p>';
+            });
+        }
+
+        // Set the Summernote content
+        $('#twoD_3D_upay_summernote').summernote('code', content);
+        
+    });
+
+    $('#ext_upay').change(function(e)
+    {
+        // Get the selected option
+        var ext_upay = $(this).find("option:selected");
+
+        // Collect the values of the selected options
+        var ext_upay_value = [];
+        ext_upay.each(function () {
+            ext_upay_value.push($(this).data("ext_upay"));
+        });
+
+        // Generate HTML content based on the selected values
+        var content = '';
+        if (ext_upay_value.length > 0) {
+            ext_upay_value.forEach(function (data) {
+                content += '<p>' + data + '</p>';
+            });
+        }
+
+        // Set the Summernote content
+        $('#ext_upay_summernote').summernote('code', content);
+        
+    });
+
+    $('#vis_upay').change(function(e)
+    {
+        // Get the selected option
+        var vis_upay = $(this).find("option:selected");
+        
+        // Collect the values of the selected options
+        var vis_upay_value = [];
+        vis_upay.each(function () {
+            vis_upay_value.push($(this).data("vis_upay"));
+        });
+
+        // Generate HTML content based on the selected values
+        var content = '';
+        if (vis_upay_value.length > 0) {
+            vis_upay_value.forEach(function (data) {
+                content += '<p>' + data + '</p>';
+            });
+        }
+
+        // Set the Summernote content
+        $('#vis_upay_summernote').summernote('code', content);
+        
+    });
+    
+    $('#vis_salla').change(function(e)
+    {
+        // Get the selected option
+        var vis_salla = $(this).find("option:selected");
+ 
+        // Collect the values of the selected options
+        var vis_salla_value = [];
+        vis_salla.each(function () {
+            vis_salla_value.push($(this).data("vis_salla"));
+        });
+
+        // Generate HTML content based on the selected values
+        var content = '';
+        if (vis_salla_value.length > 0) {
+            vis_salla_value.forEach(function (data) {
+                content += '<p>' + data + '</p>';
+            });
+        }
+
+        // Set the Summernote content
+        $('#vis_salla_summernote').summernote('code', content);
+         
+    });
+    
+    
+    //////////////////// Ajax Code : on Vastu & Disha Change Select Parinam values /////////////////////////
+
+        // get parinam from vastu & Disha wise
+     
+        $('#disha').change(function(e)
+        {
+        
+            var disha = $(this).val();      // get the question value from the question field 
+            var vastu= $('#vastu').val();      // get the question value from the question field  
+            //alert(disha);
+            $("#parinam").empty();
+            
+            $.ajax({    
+                url: '/vastumgmt/get_parinam/',
+                type :'get',
+                data : {vastu:vastu,disha:disha},
+                async: true,
+                cache: true,
+                dataType: 'json',
+                success: function(response) 
+                {
+                    console.log(response);
+
+                    //get question wise jyotishi salla.
+                    //$('#parinam').append("<option value='' class='text-muted' selected disabled>"+'Select Parinam'+"</option>");
+                    $.each(response.parinam_list,function(index,row){
+
+                        //get question wise jyotishi salla.
+                        $('#parinam').append("<option value='"+row.id+"' data-parinam='"+row.parinam+"'>"+row.parinam+"</option>");
+                                        
+                    });
+                
+                },
+                complete:function(response){
+                    // For Button Loader
+                    // $("#att_records").prop('disabled', false); 
+                    // $("#labours").prop('disabled', false);
+                    
+                }
+            });
+            
+
+        });
+ 
+   
+    ///////////////  Code For For Data Listing //////////////////////////////////
+
+    getVastuRecords();
+    function getVastuRecords(){
+        $.ajax({
+            headers:{
+                'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+            },
+            url:'/vastumgmt/get_vastu_rec/',
+            type :'get',
+            data : {},
+            cache: false,
+            dataType: 'json',                 
+            success:function(data){
+                console.log(data);
+                
+                $("#datatable").DataTable().destroy();
+                content ="";
+                var i = 0;                
+                $.each(data.vastu_mgmt_list,function(index,row){
+            
+                    content +="<tr>";
+                    content +="<td>"+ ++i  +"</td>";
+        
+                    content +="<td>";
+
+                        content +=" <a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Vastu Mgmt Record' data-id='"+row.id+"' data-client_id='"+row.client_id+"' data-client_name='"+row.client_name+"' data-date_field='"+row.date_field+"' data-vastu_id='"+row.vastu_id+"' data-disha_id='"+row.disha_id+"' data-parinam_id='"+row.parinam_id+"' data-parinam='"+row.parinam+"' data-badal_disha_id='"+row.badal_disha_id+"' data-bsn_upay_id='"+row.bsn_upay_id+"' data-bsn_upay='"+row.bsn_upay+"' data-etar_upay_id='"+row.etar_upay_id+"' data-etar_upay='"+row.etar_upay+"' data-vis_upay_id='"+row.vis_upay_id+"' data-vis_upay='"+row.vis_upay+"' data-twod_threed_upay_id='"+row.twod_threed_upay_id+"' data-twod_threed_upay='"+row.twod_threed_upay+"' data-ext_upay_id='"+row.ext_upay_id+"' data-ext_upay='"+row.ext_upay+"' data-vis_salla_id='"+row.vis_salla_id+"' data-vis_salla='"+row.vis_salla+"'><i class='far fa-edit'></i></a>";
+
+                        content +=" <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Vastu Mgmt Record' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+
+                        content +=" <a class='btn btn-outline-secondary btn-sm' href='/vastumgmt/dowload_vastu_pdf/"+row.id+"' data-bs-toggle='tooltip' data-bs-placement='top' title='Download Vastu PDF' data-id='"+row.id+"'><i class='far fa-download'></i></a>"
+
+                    content +="</td>";
+
+                    content +="<td>"+row.client_name+"</td>";
+                    content +="<td>"+row.date_field+"</td>";
+
+                
+                    if(row.vastu != null){
+                        content +="<td>"+row.vastu+"</td>";
+                    }else{
+                        content +="<td> - </td>";
+                    }
+
+                    if(row.disha != null){
+                        content +="<td>"+row.disha+"</td>";
+                    }else{
+                        content +="<td> - </td>";
+                    }
+
+                    if(row.parinam != null){
+                        content +="<td>"+row.parinam+"</td>";
+                    }else{
+                        content +="<td> - </td>";
+                    }
+
+                    if(row.badal_disha != null){
+                        content +="<td>"+row.badal_disha+"</td>";
+                    }else{
+                        content +="<td> - </td>";
+                    }
+
+                    if(row.bsn_upay != null){
+                        content +="<td>"+row.bsn_upay+"</td>";
+                    }else{
+                        content +="<td> - </td>";
+                    }
+
+                    if(row.etar_upay != null){
+                        content +="<td>"+row.etar_upay+"</td>";
+                    }else{
+                        content +="<td> - </td>";
+                    }
+
+                    if(row.vis_upay != null){
+                        content +="<td>"+row.vis_upay+"</td>";
+                    }else{
+                        content +="<td> - </td>";
+                    }
+
+                    if(row.twod_threed_upay != null){
+                        content +="<td>"+row.twod_threed_upay+"</td>";
+                    }else{
+                        content +="<td> - </td>";
+                    }
+
+                    if(row.ext_upay != null){
+                        content +="<td>"+row.ext_upay+"</td>";
+                    }else{
+                        content +="<td> - </td>";
+                    }
+
+                    if(row.vis_salla != null){
+                        content +="<td>"+row.vis_salla+"</td>";
+                    }else{
+                        content +="<td> - </td>";
+                    }
+
+
+                    content += "</tr>";
+                });
+                
+                $("#vastu_mgmt_records").html(content); //For append html data
+                $('#datatable').dataTable();
+            }
+        });
+    }
+
+
+   ///////////////////////////////////////////////////////////////////////
+
+    //On clicking The button Save Button our data Will Save in database & After Saving if we want to edit our data then also this code is required.
+
+   
+    $(document).on("click",'#add_vastu_record',function()
+    {        
+             
+        var edit_id= $('#edit_id').val();
+        var client_name= $('#client_name').val();
+        var date_field= $('#date').val();
+        var vastu= $('#vastu').val();
+        var disha= $('#disha').val();
+
+        var select = document.getElementById("parinam");
+        var parinam = [];
+        for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].selected) {
+                parinam.push(select.options[i].value);
+            }
+        }
+        var parinam = parinam.join(',');
+        var parinam_summernote = $('#parinam_summernote').summernote('code'); // Get the Summernote content
+
+        var badal_disha= $('#badal_disha').val();
+        var select = document.getElementById("bsn_upay");
+        var bsn_upay = [];
+        for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].selected) {
+                bsn_upay.push(select.options[i].value);
+            }
+        }
+        var bsn_upay = bsn_upay.join(',');
+        var bsn_upay_summernote = $('#bsn_summernote').summernote('code'); // Get the Summernote content
+
+        //var etar_upay= $('#etar_upay').val();
+        var select = document.getElementById("etar_upay");
+        var etar_upay = [];
+        for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].selected) {
+                etar_upay.push(select.options[i].value);
+            }
+        }
+        var etar_upay = etar_upay.join(',');
+        var etar_upay_summernote = $('#etar_upay_summernote').summernote('code'); // Get the Summernote content
+
+        //var vis_upay= $('#vis_upay').val();
+        var select = document.getElementById("vis_upay");
+        var vis_upay = [];
+        for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].selected) {
+                vis_upay.push(select.options[i].value);
+            }
+        }
+        var vis_upay = vis_upay.join(',');
+        var vis_upay_summernote = $('#vis_upay_summernote').summernote('code'); // Get the Summernote content
+
+        //var twod_threed_upay= $('#twod_threed_upay').val();
+        var select = document.getElementById("twod_threed_upay");
+        var twod_threed_upay = [];
+        for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].selected) {
+                twod_threed_upay.push(select.options[i].value);
+            }
+        }
+        var twod_threed_upay = twod_threed_upay.join(',');
+        var twoD_3D_upay_summernote = $('#twoD_3D_upay_summernote').summernote('code'); // Get the Summernote content
+
+        //var ext_upay= $('#ext_upay').val();
+        var select = document.getElementById("ext_upay");
+        var ext_upay = [];
+        for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].selected) {
+                ext_upay.push(select.options[i].value);
+            }
+        }
+        var ext_upay = ext_upay.join(',');
+        var ext_upay_summernote = $('#ext_upay_summernote').summernote('code'); // Get the Summernote content
+
+        //var vis_salla= $('#vis_salla').val();
+        var select = document.getElementById("vis_salla");
+        var vis_salla = [];
+        for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].selected) {
+                vis_salla.push(select.options[i].value);
+            }
+        }
+        var vis_salla = vis_salla.join(',');
+        var vis_salla_summernote = $('#vis_salla_summernote').summernote('code'); // Get the Summernote content
+        // The Contain on Form Which We Feed, so it will send the data to view Function for Saving purpose.
+        $.ajax({
+            headers: {
+                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            url:'/vastumgmt/post_vastu_rec/',
+            type :'post',
+            data : {edit_id:edit_id,client_name:client_name,date_field:date_field,vastu:vastu,disha:disha,parinam:parinam,parinam_summernote:parinam_summernote,badal_disha:badal_disha,bsn_upay:bsn_upay,bsn_upay_summernote:bsn_upay_summernote,etar_upay:etar_upay,etar_upay_summernote:etar_upay_summernote,vis_upay:vis_upay,vis_upay_summernote:vis_upay_summernote,twod_threed_upay:twod_threed_upay,twoD_3D_upay_summernote:twoD_3D_upay_summernote,ext_upay:ext_upay,ext_upay_summernote:ext_upay_summernote,vis_salla:vis_salla,vis_salla_summernote:vis_salla_summernote},
+            async: false,
+            cache: true,
+            dataType: 'json',
+            success:function(response){
+                console.log(response);
+
+                if (response.status==true) {  
+                   
+                    getVastuRecords();
+                    // ACTIVE PANE AND LINK
+                    $('.nav-tabs a[href="#vastu_mgmt_list"]').tab('show');
+
+                    //For Notification
+                    toastr.options.timeOut = 5000;
+                    toastr.options.positionClass = 'toast-top-right';
+                    toastr.options.showEasing= 'swing';
+                    toastr.options.hideEasing= 'linear';
+                    toastr.options.showMethod= 'fadeIn';
+                    toastr.options.hideMethod= 'fadeOut';
+                    toastr.options.closeButton= true;
+                    toastr.success(response.message);
+        
+                }else{
+
+                    //For Notification
+                    toastr.options.timeOut = 5000;
+                    toastr.options.positionClass = 'toast-top-right';
+                    toastr.options.showEasing= 'swing';
+                    toastr.options.hideEasing= 'linear';
+                    toastr.options.showMethod= 'fadeIn';
+                    toastr.options.hideMethod= 'fadeOut';
+                    toastr.options.closeButton= true;
+                    toastr.error(response.message);
+                }
+            }
+        });
+
+   
+    }); 
+
+    ///////////////////////////////////////////////////////////////////////
+
+    // On Edit Button Update Client Information
+    $(document).on("click",'.editU',function()
+    {
+        var id = $(this).data('id');
+        if(id !=""){
+            var client_id = $(this).data('client_id');
+            var date_field = $(this).data('date_field');
+            var vastu_id = $(this).data('vastu_id');
+            var disha_id = $(this).data('disha_id');
+            var parinam = $(this).data('parinam');
+            var badal_disha_id = $(this).data('badal_disha_id');
+            var bsn_upay = $(this).data('bsn_upay');
+            var etar_upay = $(this).data('etar_upay');
+            var vis_upay = $(this).data('vis_upay');
+            var twod_threed_upay = $(this).data('twod_threed_upay');
+            var ext_upay = $(this).data('ext_upay');
+            var vis_salla = $(this).data('vis_salla');
+
+            //////////////////////////////////////////////////////////////////////////////////
+
+            //Create Multi Dropdown Array List
+
+            var parinam_id = $(this).data('parinam_id');                    // Select Dropdown record id
+            var parinams=new Array();
+            if (parinam_id.toString().indexOf(',')>-1)
+            { 
+                var parinams=parinam_id.split(',');
+            }
+            else
+            {
+                parinams[0]=parinam_id.toString();
+            }
+            
+            var bsn_upay_id = $(this).data('bsn_upay_id');                    // Select Dropdown record id
+            var bsn_upays=new Array();
+            if (bsn_upay_id.toString().indexOf(',')>-1)
+            { 
+                var bsn_upays=bsn_upay_id.split(',');
+            }
+            else
+            {
+                bsn_upays[0]=bsn_upay_id.toString();
+            }
+
+            var etar_upay_id = $(this).data('etar_upay_id');                    // Select Dropdown record id
+            var etar_upays=new Array();
+            if (etar_upay_id.toString().indexOf(',')>-1)
+            { 
+                var etar_upays=etar_upay_id.split(',');
+            }
+            else
+            {
+                etar_upays[0]=etar_upay_id.toString();
+            }
+
+            var vis_upay_id = $(this).data('vis_upay_id');                    // Select Dropdown record id
+            var vis_upays=new Array();
+            if (vis_upay_id.toString().indexOf(',')>-1)
+            { 
+                var vis_upays=vis_upay_id.split(',');
+            }
+            else
+            {
+                vis_upays[0]=vis_upay_id.toString();
+            }
+
+            var twod_threed_upay_id = $(this).data('twod_threed_upay_id');    // Select Dropdown record id
+            var twod_threed_upays=new Array();
+            if (twod_threed_upay_id.toString().indexOf(',')>-1)
+            { 
+                var twod_threed_upays=twod_threed_upay_id.split(',');
+            }
+            else
+            {
+                twod_threed_upays[0]=twod_threed_upay_id.toString();
+            }
+
+            var ext_upay_id = $(this).data('ext_upay_id');    // Select Dropdown record id
+            var ext_upays=new Array();
+            if (ext_upay_id.toString().indexOf(',')>-1)
+            { 
+                var ext_upays=ext_upay_id.split(',');
+            }
+            else
+            {
+                ext_upays[0]=ext_upay_id.toString();
+            }
+
+            var vis_salla_id = $(this).data('vis_salla_id');    // Select Dropdown record id
+            var vis_sallas=new Array();
+            if (vis_salla_id.toString().indexOf(',')>-1)
+            { 
+                var vis_sallas=vis_salla_id.split(',');
+            }
+            else
+            {
+                vis_sallas[0]=vis_salla_id.toString();
+            }
+
+            $('.nav-tabs a[href="#update_vastu_mgmt"]').tab('show');
+
+            
+            $('#edit_id').val(id);
+            $("#client_name").val(client_id).trigger("change");    //This code is for single dropdown   
+            $('#date').val(date_field); 
+            $("#vastu").val(vastu_id).trigger("change"); 
+            $("#disha").val(disha_id).trigger("change");
+            $("#badal_disha").val(badal_disha_id).trigger("change"); 
+
+            
+
+            ////////////////////////////////////////////////////////////////
+
+            //Set Multi Dropdown Values
+
+            $.each(parinams,function(index,value)
+            {
+                $("#parinam option[value='"+value+"']").attr('selected','selected').change();
+            });
+
+            $.each(bsn_upays,function(index,value)
+            {
+                $("#bsn_upay option[value='"+value+"']").attr('selected','selected').change();
+            });
+
+            $.each(etar_upays,function(index,value)
+            {
+                $("#etar_upay option[value='"+value+"']").attr('selected','selected').change();
+            });
+
+            $.each(vis_upays,function(index,value)
+            {
+                $("#vis_upay option[value='"+value+"']").attr('selected','selected').change();
+            });
+
+            $.each(twod_threed_upays,function(index,value)
+            {
+                $("#twod_threed_upay option[value='"+value+"']").attr('selected','selected').change();
+            });
+
+            $.each(ext_upays,function(index,value)
+            {
+                $("#ext_upay option[value='"+value+"']").attr('selected','selected').change();
+            });
+
+            $.each(vis_sallas,function(index,value)
+            {
+                $("#vis_salla option[value='"+value+"']").attr('selected','selected').change();
+            });
+
+            //setSubCategoryJyoSallaValue(jyo_sallas);
+            //setSubCategoryVisSallaValue(vis_sallas);
+            //setSubCategoryKarUpayValue(kar_upays);
+
+            $('#parinam_summernote').summernote('code', parinam);
+            $('#bsn_summernote').summernote('code', bsn_upay);
+            $('#etar_upay_summernote').summernote('code', etar_upay);
+            $('#vis_upay_summernote').summernote('code', vis_upay);
+            $('#twoD_3D_upay_summernote').summernote('code', twod_threed_upay);
+            $('#ext_upay_summernote').summernote('code', ext_upay);
+            $('#vis_salla_summernote').summernote('code', vis_salla);
+        }
+    });
+
+     // On Delete Button Delete Client Information
+     $(document).on("click",'.delI',function()
+     {
+         var id = $(this).data('id');
+         //$('#id').val(id);
+         $('#delete_record_modal form').attr("action","/vastumgmt/vastu_mgmt_delete/"+id+"/");
+         $('#delete_record_modal').modal('show');
+     });
+
+</script>
+
+{% endblock page_js %}

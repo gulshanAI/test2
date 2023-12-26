@@ -1,0 +1,225 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block meta %}
+    <title>DMS - Dashboard</title>
+{% endblock meta %}
+
+{% block datatable_css %}
+    <link rel="stylesheet" href="{% static 'assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css'%}">
+{% endblock datatable_css %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{% static 'assets/libs/select2/css/select2.min.css'%}">
+    
+    <style>
+        .form-floating>.form-control, .form-floating>.form-select {
+            height: calc(2.8rem + 1px) !important;
+            padding: 1rem .75rem;
+        }
+        .form-floating>.textuti {
+            height: calc(2.8rem + 30px) !important;
+        }
+        .select2
+        {
+            width: 100% !important;
+        }
+        .amsify-suggestags-list{
+        z-index: 1 !important;
+        width: 100% !important;
+        }
+        textarea,
+        .textarea {
+        min-height: inherit;
+        height: auto;
+        }
+        .form-check
+        {
+            display: inline-block;
+        }
+
+        /** SPINNER CREATION **/
+
+        .loader {
+        position: relative;
+        text-align: center;
+        margin: 15px auto 35px auto;
+        z-index: 9999;
+        display: block;
+        width: 80px;
+        height: 80px;
+        border: 10px solid rgba(0, 0, 0, .3);
+        border-radius: 50%;
+        border-top-color: #000;
+        animation: spin 1s ease-in-out infinite;
+        -webkit-animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+        }
+
+        @-webkit-keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+        }
+    </style>
+{% endblock page_css %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item active">Vastu</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-sm-flex flex-wrap">     
+                        <h4 class="card-title mb-4">Vastu</h4>
+                        <div class="ms-auto">
+                                <!-- <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm" data-bs-toggle="modal" data-bs-target="#addModal" style="margin-left: 10px;">
+                                <i class="mdi mdi-plus font-size-11"></i> Add OA
+                                </button>  -->
+                            </div>
+                        </div>
+
+                        {% include 'common/alert.html' %}
+                        
+                        <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#vastu_list" role="tab">
+                                    <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                    <span class="d-none d-sm-block">Vastu List</span> 
+                                </a>
+                            </li>
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#update_vastu" role="tab">
+                                    <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                    <span class="d-none d-sm-block">ADD / Update Vastu</span> 
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content p-3 text-muted">
+                            <div class="tab-pane active" id="vastu_list" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="datatable"> 
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" style="width: 20px;">Sr.No</th>
+                                                <th scope="col" style="white-space: normal;">Vastu</th>
+                                                <th scope="col" style="white-space: normal;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {%for vl in vastu_list%}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{vl.vastu}}</td>
+                                                    <td>
+                                                        <!-- Code For Edit Button -->
+                                                        <a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Vastu' data-id='{{vl.id}}' data-vastu='{{vl.vastu}}'><i class='far fa-edit' ></i></a>
+
+                                                        <!-- Code For Delete Button -->
+                                                        <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Vastu' data-id='{{vl.id}}'><i class='fas fa-trash-alt' ></i></button>
+                                                    </td>
+                                                </tr>
+                                            {%endfor%}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+        
+                            <div class="tab-pane" id="update_vastu" role="tabpanel">
+
+                                <!-- Code For Add/Update Question -->
+                                <form method="post" class="row" action="/vastumgmt/post_vastu_view/" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="edit_id" id="edit_id" value="">
+                                    <div class="row">
+                                        <div class="col-md-11 col-sm-12 col-lg-11">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="vastu" placeholder="Enter Section Name" name="vastu" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
+                                                <label for="vastu">Vastu<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="serror"></span>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-1 col-sm-12 col-lg-1 mt-2">
+                                            <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2 submit_btn" id="add_sec"  value="Save"> Save </button>
+                                        </div>
+                                    </div> 
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+{% include 'common/delete_model.html' %}
+{% endblock content %}  
+
+{% block datatable_js %}
+    
+    <script src="{% static 'assets/libs/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('#datatable').dataTable();     
+        }); 
+    </script>
+{% endblock datatable_js %}
+{% block page_js %}
+
+<script src="{% static 'assets/libs/select2/js/select2.min.js' %}"></script>
+<script>
+    
+    // On Edit Button Update Client Information
+    $(document).on("click",'.editU',function()
+    {
+        var id = $(this).data('id');
+        if(id !=""){
+            var vastu = $(this).data('vastu');
+
+            $('.nav-tabs a[href="#update_vastu"]').tab('show');
+
+            $('#edit_id').val(id);     //Set Record id
+            $('#vastu').val(vastu);
+        }
+    });
+
+    // On Delete Button Delete Client Information
+    $(document).on("click",'.delI',function()
+    {
+        var id = $(this).data('id');
+        //$('#id').val(id);
+        $('#delete_record_modal form').attr("action","/vastumgmt/vastu_delete/"+id+"/");
+        $('#delete_record_modal').modal('show');
+    });
+</script>
+
+
+{% endblock page_js %}

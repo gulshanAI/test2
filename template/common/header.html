@@ -1,0 +1,92 @@
+
+{% load static %}
+
+<header id="page-topbar">
+    <div class="navbar-header">
+        <div class="d-flex">
+            <!-- LOGO -->
+            <div class="navbar-brand-box">
+                <!-- {% comment %} <a href="{{route('dashboard')}}" class="logo logo-dark"> {% endcomment %} -->
+                <a href="#" class="logo logo-dark">
+
+                    <span class="logo-sm">
+                        <!-- {% comment %} <img src='{{asset("files/company/$logo")}}' alt="" height="30"> {% endcomment %} -->
+                        
+                        <img src="{% static 'assets/files/company/logo.png' %}" alt="" height="30">
+
+
+                    </span>
+                    <span class="logo-lg">
+                        <!-- {% comment %} <img src="{{asset('files/company/logo.png')}}" alt="" height="50"> {% endcomment %} -->
+                        <img src="{% static 'assets/files/company/logo.png' %}" alt="" height="50">
+
+                    </span>
+                </a>
+
+                <a href="#" class="logo logo-light">
+                    <span class="logo-sm">
+                        <!-- {% comment %} <img src='{{asset("files/company/$logo")}}' alt="" height="30"> {% endcomment %} -->
+                        <img src="{% static 'assets/files/company/logo.png' %}" alt="" height="30">
+
+                    </span>
+                    <span class="logo-lg">
+                        <!-- {% comment %} <img src='{{asset("files/company/logo.png")}}' alt="" height="50"> {% endcomment %} -->
+                        <img src="{% static 'assets/files/company/logo.png' %}" alt="" height="50">
+
+                    </span>
+                </a>
+            </div>
+
+            <button type="button" class="btn btn-sm px-3 font-size-16 d-lg-none header-item waves-effect waves-light" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content">
+                <i class="fa fa-fw fa-bars"></i>
+            </button>
+
+
+        </div>
+
+        <div class="d-flex">
+            
+            <div class="dropdown d-none d-lg-inline-block ms-1">
+                <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
+                    <i class="bx bx-fullscreen"></i>
+                </button>
+            </div>
+
+            
+            <div class="dropdown d-inline-block">
+                <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="rounded-circle header-profile-user" src="{% static 'assets/files/company/logo.png' %}"
+                        alt="Header Avatar">
+                    <!-- {% comment %} <span class="d-none d-xl-inline-block ms-1" key="t-henry">{{Session::get('NAME')}}</span> {% endcomment %} -->
+                    <span class="d-none d-xl-inline-block ms-1" key="t-henry">{{ request.session.name }}</span>
+
+
+                    <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <!-- item-->
+                    <!-- {% comment %} <a class="dropdown-item" href="{{route('profile.page')}}"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile">Profile</span></a> {% endcomment %} -->
+
+                    <a class="dropdown-item" href="/updateprofileview/"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile">Profile</span></a>
+                    
+                    <!-- {% comment %} @if($roles==0)
+                    <a class="dropdown-item" href="{{route('company.profile.page')}}"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile">Company Profile</span></a>
+                    @endif {% endcomment %} -->
+
+                    
+                    <a class="dropdown-item" href="/companyprofile/"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile">Company Profile</span></a>
+                    
+                    
+                    
+                    <!-- {% comment %} <a class="dropdown-item text-danger" href="{{route('admin.logout')}}"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout">Logout</span></a> {% endcomment %} -->
+
+                    <a class="dropdown-item text-danger" href="/logout"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout">Logout</span></a>
+                </div>
+            </div>
+
+            
+
+        </div>
+    </div>
+</header>

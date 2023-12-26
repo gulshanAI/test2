@@ -1,0 +1,21 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hindi Content PDF</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Hello</h1>
+    <p>इस पीडीएफ में हिंदी सामग्री है।</p>
+    ज्योतिषी विशारद | ज्योतिषाचार्य | कृष्णमूर्ती नक्षत्र भूषण | वास्तु विशारद | अंकशास्त्र | महावास्तु तज्ञ | जिओपॅथिक तणाव सल्लागार | खगोल वास्तु सल्लागार
+    {%for jul in heading%}
+    {{ jul.jyo_upay | safe }}
+    {%endfor%}
+</body>
+</html>
